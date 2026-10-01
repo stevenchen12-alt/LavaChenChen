@@ -2,9 +2,12 @@
 
 
 #include "LavaCharacter.h"
+
+#include "LavaGameMode.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ALavaCharacter::ALavaCharacter()
@@ -48,13 +51,16 @@ void ALavaCharacter::BeginPlay()
 			Subsystem->AddMappingContext(ThirdPersonContext, 0);
 		}
 	}
+	LastSafeLocation = GetActorLocation();
+	LastSafeRotation = GetActorRotation();
+	
+	GetWorldTimerManager().SetTimer(LastSafePosTimerHandle, this, &ALavaCharacter::UpdateLastSafeLocation, SafeCheckInterval, true);
 }
 
 // Called every frame
 void ALavaCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 // Called to bind functionality to input
@@ -115,4 +121,28 @@ void ALavaCharacter::Look(const FInputActionValue& Value)
 		AddControllerYawInput(LookAxisValue.X);
 		AddControllerPitchInput(LookAxisValue.Y);
 	}
+}
+
+void ALavaCharacter::UpdateLastSafeLocation()
+{
+	if (!GetCharacterMovement()->IsFalling())
+	{
+		LastSafeLocation = GetActorLocation();
+		LastSafeRotation = GetActorRotation();
+	} 
+}
+
+void ALavaCharacter::RespawnAtSafeLocation()
+{
+	if (ALavaGameMode* GameMode = Cast<ALavaGameMode>(UGameplayStatics::GetGameMode(this)))
+	{
+		GameMode->ReportLifeLost();
+	}
+	
+	if (GetCharacterMovement())
+	{
+		GetCharacterMovement()->StopMovementImmediately();
+	}
+	
+	SetActorLocationAndRotation(LastSafeLocation, LastSafeRotation);
 }

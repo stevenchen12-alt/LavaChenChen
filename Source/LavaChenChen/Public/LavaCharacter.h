@@ -58,6 +58,13 @@ protected:
 	float AirControlTuning = 0.7f;
 	UPROPERTY(EditAnywhere, Category="Tuning")
 	float GravityScaleTuning = 0.8f;
+	
+	FVector LastSafeLocation;
+	FRotator LastSafeRotation;
+	FTimerHandle LastSafePosTimerHandle;
+	
+	UPROPERTY(EditAnywhere, Category="Tuning")
+	float SafeCheckInterval = 0.5f;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -73,6 +80,12 @@ public:
 	
 	UFUNCTION()
 	void SetupMovementTuning();
+	
+	UFUNCTION()
+	void RespawnAtSafeLocation();
+	
+	UFUNCTION()
+	void UpdateLastSafeLocation();
 	// Third Person camera
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	TObjectPtr<UCameraComponent> ThirdPersonCameraComponent;
