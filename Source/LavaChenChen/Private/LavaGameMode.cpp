@@ -1,10 +1,106 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// LavaGameMode.cpp
 
 
 #include "LavaGameMode.h"
 
-void ALavaGameMode::StartPlay() {
-	Super::StartPlay();
-	
-	check(GEngine != nullptr);
+ALavaGameMode::ALavaGameMode() {
+
 }
+
+void ALavaGameMode::ReportKeyCollected() {
+	if (HasAllKeys()) {
+		return;
+	}
+
+	KeysCollected++;
+
+	Score += 200;
+
+	if (KeysCollected > KeysRequired) {
+		KeysCollected = KeysRequired;
+	}
+}
+
+void ALavaGameMode::ReportLifeLost() {
+	if (LivesLeft <= 0) {
+		return;
+	}
+
+	LivesLeft--;
+	Score -= 100;
+
+	if (LivesLeft <= 0) {
+		EndGame(false);
+	}
+}
+
+void ALavaGameMode::ReportHatchReached() {
+	if (HasAllKeys()) {
+		EndGame(true);
+	}
+
+	else {
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("You need all three keys to enter the hatch!"));
+	}
+}
+
+float ALavaGameMode::GetTimeRemaining() const {
+	return GetWorld()->GetTimerManager().GetTimerRemaining(LevelTimer);
+}
+
+void ALavaGameMode::BeginPlay() {
+	Super::BeginPlay();
+
+	KeysCollected = 0;
+	LivesLeft = StartingLives;
+	Score = 0;
+	bGameOver = false;
+
+	// Timer fires every 1.0 second. Loops continuously (true)
+	GetWorld()->GetTimerManager().SetTimer(LevelTimer, this, &ALavaGameMode::HandleTimeExpired, 1.0f, true);
+}
+
+void ALavaGameMode::EndPlay(const EEndPlayReason::Type Reason) {
+	GetWorld()->GetTimerManager().ClearTimer(LevelTimer);
+
+	Super::EndPlay(Reason);
+}
+
+void ALavaGameMode::EndGame(bool bWon) {
+	if (bGameOver) {
+		return;
+	}
+
+	GetWorld()->GetTimerManager().PauseTimer(LevelTimer);
+
+	if (bWon) {
+		Score += FMath::FloorToInt(GetTimeRemaining());
+	}
+
+	bGameOver = true;
+
+	/*if (ResultWidgetClass) {
+		UResultWidget* ResultWidget = CreateWidget<UResultWidget>(GetWorld(), ResultWidgetClass);
+
+		if (ResultWidget) {
+			// Show the widget
+			ResultWidget->AddToViewport();
+
+			if (APlayerController* PC = GetWorld()->GetFirstPlayerController()) {
+				PC->SetShowMouseCursor(true);
+
+				// Swap input mode to UI only to be able to click on the widget
+				FInputModeUIOnly InputMode;
+				InputMode.SetWidgetToFocus(ResultWidget->TakeWidget());
+				PC->SetInputMode(InputMode);
+			}
+		}
+	}*/
+
+	EndPlay(EEndPlayReason::LevelTransition);
+}
+
+void ALavaGameMode::HandleTimeExpired() {
+	EndGame(false);
+}
+
