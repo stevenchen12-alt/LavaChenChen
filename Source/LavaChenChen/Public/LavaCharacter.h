@@ -52,6 +52,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	TObjectPtr<UInputAction> LookAction;
 	
+	UPROPERTY(EditAnywhere, Category="Tuning")
+	float JumpZVelocityTuning = 700.f;
+	UPROPERTY(EditAnywhere, Category="Tuning")
+	float AirControlTuning = 0.7f;
+	UPROPERTY(EditAnywhere, Category="Tuning")
+	float GravityScaleTuning = 0.8f;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -65,6 +71,8 @@ public:
 	UFUNCTION()
 	void Look(const FInputActionValue& Value);
 	
+	UFUNCTION()
+	void SetupMovementTuning();
 	// Third Person camera
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	TObjectPtr<UCameraComponent> ThirdPersonCameraComponent;

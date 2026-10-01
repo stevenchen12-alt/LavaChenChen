@@ -31,17 +31,8 @@ ALavaCharacter::ALavaCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach camera to end of boom
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 	
-	// Set Max Jumps to 2
-	JumpMaxCount = 2;
-	
-	// Adjust gravity by a little to make jumps easier
-	GetCharacterMovement()->GravityScale = 0.8f;
-	
-	// Adjust air control for better jumps
-	GetCharacterMovement()->AirControl = 0.7f;
-	
-	// Increases rate of deacceleration in the air
-	GetCharacterMovement()->BrakingDecelerationFalling = 600.0f;
+	// Setups the movement tuning
+	SetupMovementTuning();
 }
 
 // Called when the game starts or when spawned
@@ -81,6 +72,19 @@ void ALavaCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		// Bind Look
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ALavaCharacter::Look);
 	}
+}
+
+void ALavaCharacter::SetupMovementTuning()
+{
+	UCharacterMovementComponent* Movement = GetCharacterMovement();
+	if (Movement)
+	{
+		Movement->JumpZVelocity = JumpZVelocityTuning;
+		Movement->AirControl = AirControlTuning;
+		Movement->GravityScale = GravityScaleTuning;
+	}
+	// Changes Jump Count to 2
+	JumpMaxCount = 2;
 }
 
 void ALavaCharacter::Move(const FInputActionValue& Value)
