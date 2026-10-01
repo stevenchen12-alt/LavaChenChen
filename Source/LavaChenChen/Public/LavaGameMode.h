@@ -6,7 +6,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "LavaGameMode.generated.h"
 
-//class UResultWidget;
+class UResultWidget;
 
 UCLASS()
 class LAVACHENCHEN_API ALavaGameMode : public AGameModeBase
@@ -51,8 +51,8 @@ protected:
     float LevelSeconds = 300.f;
 
     /** Assign your WBP_Result child of this on BP_LavaGameMode. */
-    /*UPROPERTY(EditDefaultsOnly, Category = "UI")
-    TSubclassOf<UResultWidget> ResultWidgetClass;*/
+    UPROPERTY(EditDefaultsOnly, Category = "UI")
+    TSubclassOf<UResultWidget> ResultWidgetClass;
 
     UPROPERTY(BlueprintReadOnly, Category = "Rules")
     int32 KeysCollected = 0;
@@ -65,4 +65,7 @@ protected:
 
     bool bGameOver = false;
     FTimerHandle LevelTimer;
+    
+    // --- Added ---
+    FString Message;
 };

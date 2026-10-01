@@ -2,9 +2,29 @@
 
 
 #include "LavaGameMode.h"
+#include "Blueprint/UserWidget.h"
+#include "ResultWidget.h"
 
 ALavaGameMode::ALavaGameMode() {
 
+}
+
+void ALavaGameMode::BeginPlay() {
+	Super::BeginPlay();
+
+	KeysCollected = 0;
+	LivesLeft = StartingLives;
+	Score = 0;
+	bGameOver = false;
+
+	// Timer fires every 1.0 second. Loops continuously (true)
+	GetWorld()->GetTimerManager().SetTimer(LevelTimer, this, &ALavaGameMode::HandleTimeExpired, 1.0f, true);
+}
+
+void ALavaGameMode::EndPlay(const EEndPlayReason::Type Reason) {
+	GetWorld()->GetTimerManager().ClearTimer(LevelTimer);
+
+	Super::EndPlay(Reason);
 }
 
 void ALavaGameMode::ReportKeyCollected() {
@@ -30,6 +50,7 @@ void ALavaGameMode::ReportLifeLost() {
 	Score -= 100;
 
 	if (LivesLeft <= 0) {
+		Message = TEXT("You died!");
 		EndGame(false);
 	}
 }
@@ -48,24 +69,6 @@ float ALavaGameMode::GetTimeRemaining() const {
 	return GetWorld()->GetTimerManager().GetTimerRemaining(LevelTimer);
 }
 
-void ALavaGameMode::BeginPlay() {
-	Super::BeginPlay();
-
-	KeysCollected = 0;
-	LivesLeft = StartingLives;
-	Score = 0;
-	bGameOver = false;
-
-	// Timer fires every 1.0 second. Loops continuously (true)
-	GetWorld()->GetTimerManager().SetTimer(LevelTimer, this, &ALavaGameMode::HandleTimeExpired, 1.0f, true);
-}
-
-void ALavaGameMode::EndPlay(const EEndPlayReason::Type Reason) {
-	GetWorld()->GetTimerManager().ClearTimer(LevelTimer);
-
-	Super::EndPlay(Reason);
-}
-
 void ALavaGameMode::EndGame(bool bWon) {
 	if (bGameOver) {
 		return;
@@ -79,10 +82,12 @@ void ALavaGameMode::EndGame(bool bWon) {
 
 	bGameOver = true;
 
-	/*if (ResultWidgetClass) {
+	if (ResultWidgetClass) {
 		UResultWidget* ResultWidget = CreateWidget<UResultWidget>(GetWorld(), ResultWidgetClass);
 
 		if (ResultWidget) {
+			ResultWidget->SetupResultScreen(bWon, Score, Message);
+
 			// Show the widget
 			ResultWidget->AddToViewport();
 
@@ -95,12 +100,13 @@ void ALavaGameMode::EndGame(bool bWon) {
 				PC->SetInputMode(InputMode);
 			}
 		}
-	}*/
+	}
 
 	EndPlay(EEndPlayReason::LevelTransition);
 }
 
 void ALavaGameMode::HandleTimeExpired() {
+	Message = TEXT("You ran out of time!");
 	EndGame(false);
 }
 

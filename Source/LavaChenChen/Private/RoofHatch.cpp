@@ -1,6 +1,5 @@
 // RoofHatch.cpp
 
-#include "Components/SphereComponent.h"
 #include "RoofHatch.h"
 #include "LavaCharacter.h"
 #include "LavaGameMode.h"

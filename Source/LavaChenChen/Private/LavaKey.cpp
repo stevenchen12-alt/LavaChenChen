@@ -1,6 +1,5 @@
 // LavaKey.cpp
 
-#include "Components/SphereComponent.h"
 #include "LavaKey.h"
 #include "LavaCharacter.h"
 #include "LavaGameMode.h"
