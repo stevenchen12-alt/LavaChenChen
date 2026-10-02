@@ -29,7 +29,7 @@ protected:
 	TObjectPtr<UStaticMeshComponent> Mesh;
 
 	UPROPERTY(VisibleAnywhere, Category = "Components")
-	TObjectPtr<USphereComponent> PickupRange;
+	TObjectPtr<USphereComponent> CollisionRange;
 
 public:	
 	// Called every frame

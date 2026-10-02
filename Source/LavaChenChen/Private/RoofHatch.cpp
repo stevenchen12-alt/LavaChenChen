@@ -11,25 +11,25 @@ ARoofHatch::ARoofHatch()
 	PrimaryActorTick.bCanEverTick = false;
 
 	// Create the key's mesh component
-	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("KeyMesh"));
+	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RoofHatchMesh"));
 	check(Mesh != nullptr);
 
 	SetRootComponent(Mesh);
 
 	// Create the collider
-	PickupRange = CreateDefaultSubobject<USphereComponent>(TEXT("PickupRange"));
-	check(PickupRange != nullptr);
+	CollisionRange = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionRange"));
+	check(CollisionRange != nullptr);
 
-	PickupRange->SetupAttachment(Mesh);
-	PickupRange->SetSphereRadius(32.f);
-	PickupRange->SetGenerateOverlapEvents(true);
-	PickupRange->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	CollisionRange->SetupAttachment(Mesh);
+	CollisionRange->SetSphereRadius(32.f);
+	CollisionRange->SetGenerateOverlapEvents(true);
+	CollisionRange->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
 	// Remove engine defaults on collision channels
-	PickupRange->SetCollisionResponseToAllChannels(ECR_Ignore);
+	CollisionRange->SetCollisionResponseToAllChannels(ECR_Ignore);
 
 	// Generate an overlap for any pawns
-	PickupRange->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	CollisionRange->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 }
 
 // Called when the game starts or when spawned
@@ -38,13 +38,13 @@ void ARoofHatch::BeginPlay()
 	Super::BeginPlay();
 	
 	// Ensure we don't bind the overlap event more than once
-	PickupRange->OnComponentBeginOverlap.RemoveAll(this);
+	CollisionRange->OnComponentBeginOverlap.RemoveAll(this);
 
 	// Register the overlap event so it runs when an overlap happens
-	PickupRange->OnComponentBeginOverlap.AddDynamic(this, &ARoofHatch::HandleOverlap);
+	CollisionRange->OnComponentBeginOverlap.AddDynamic(this, &ARoofHatch::HandleOverlap);
 
 	Mesh->SetVisibility(true);
-	PickupRange->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	CollisionRange->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 }
 
 // Called every frame
@@ -69,7 +69,7 @@ void ARoofHatch::HandleOverlap(UPrimitiveComponent* OverlappedComp, AActor* Othe
 
 			Mesh->SetVisibility(false);
 			Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-			PickupRange->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			CollisionRange->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		}
 	}
 }
