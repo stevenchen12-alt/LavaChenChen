@@ -16,6 +16,7 @@ void ALavaGameMode::BeginPlay() {
 	LivesLeft = StartingLives;
 	Score = 0;
 	bGameOver = false;
+	Message = TEXT("");
 
 	// Timer fires every 1.0 second. Loops continuously (true)
 	GetWorld()->GetTimerManager().SetTimer(LevelTimer, this, &ALavaGameMode::HandleTimeExpired, 1.0f, true);
@@ -78,6 +79,7 @@ void ALavaGameMode::EndGame(bool bWon) {
 
 	if (bWon) {
 		Score += FMath::FloorToInt(GetTimeRemaining());
+		Message = TEXT("You escaped the lava!");
 	}
 
 	bGameOver = true;
