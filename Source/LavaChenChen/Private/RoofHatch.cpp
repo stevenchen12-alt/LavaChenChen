@@ -10,17 +10,22 @@ ARoofHatch::ARoofHatch()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
-	// Create the key's mesh component
-	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RoofHatchMesh"));
-	check(Mesh != nullptr);
+	// Create the roof hatch's mesh component
+	DoorFrameMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("DoorFrameMesh"));
+	check(DoorFrameMesh != nullptr);
 
-	SetRootComponent(Mesh);
+	SetRootComponent(DoorFrameMesh);
+
+	DoorMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("DoorMesh"));
+	check(DoorFrameMesh != nullptr);
+
+	DoorMesh->SetupAttachment(DoorFrameMesh);
 
 	// Create the collider
 	CollisionRange = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionRange"));
 	check(CollisionRange != nullptr);
 
-	CollisionRange->SetupAttachment(Mesh);
+	CollisionRange->SetupAttachment(DoorFrameMesh);
 	CollisionRange->SetSphereRadius(32.f);
 	CollisionRange->SetGenerateOverlapEvents(true);
 	CollisionRange->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
@@ -36,6 +41,8 @@ ARoofHatch::ARoofHatch()
 void ARoofHatch::BeginPlay()
 {
 	Super::BeginPlay();
+
+	bIsOpening = false;
 	
 	// Ensure we don't bind the overlap event more than once
 	CollisionRange->OnComponentBeginOverlap.RemoveAll(this);
@@ -43,7 +50,8 @@ void ARoofHatch::BeginPlay()
 	// Register the overlap event so it runs when an overlap happens
 	CollisionRange->OnComponentBeginOverlap.AddDynamic(this, &ARoofHatch::HandleOverlap);
 
-	Mesh->SetVisibility(true);
+	DoorFrameMesh->SetVisibility(true);
+	DoorMesh->SetVisibility(true);
 	CollisionRange->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 }
 
@@ -51,7 +59,6 @@ void ARoofHatch::BeginPlay()
 void ARoofHatch::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void ARoofHatch::HandleOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& Sweep) {
@@ -62,15 +69,24 @@ void ARoofHatch::HandleOverlap(UPrimitiveComponent* OverlappedComp, AActor* Othe
 		// Make sure the colliding actor is the player character
 		if (ALavaCharacter* PlayerCharacter = Cast<ALavaCharacter>(OtherActor)) {
 
+			OpenHatch();
+
 			// Cast the current game mode to LavaGameMode
 			if (ALavaGameMode* GameMode = Cast<ALavaGameMode>(GetWorld()->GetAuthGameMode())) {
 				GameMode->ReportHatchReached();
 			}
 
-			Mesh->SetVisibility(false);
-			Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			DoorFrameMesh->SetVisibility(false);
+			DoorFrameMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+			DoorMesh->SetVisibility(false);
+			DoorMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 			CollisionRange->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		}
 	}
 }
 
+void ARoofHatch::OpenHatch() {
+	bIsOpening = true;
+}

@@ -26,13 +26,22 @@ protected:
 		bool bFromSweep, const FHitResult& Sweep);
 
 	UPROPERTY(VisibleAnywhere, Category = "Components")
-	TObjectPtr<UStaticMeshComponent> Mesh;
+	TObjectPtr<UStaticMeshComponent> DoorFrameMesh;
+
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	TObjectPtr<UStaticMeshComponent> DoorMesh;
 
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	TObjectPtr<USphereComponent> CollisionRange;
+
+	// --- Added ---
+	bool bIsOpening = false;
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	// --- Added ---
+	UFUNCTION()
+	void OpenHatch();
 };

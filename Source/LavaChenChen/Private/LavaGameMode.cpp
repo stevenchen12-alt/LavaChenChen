@@ -4,9 +4,14 @@
 #include "LavaGameMode.h"
 #include "Blueprint/UserWidget.h"
 #include "ResultWidget.h"
+#include "LavaKey.h"
+#include "GameFramework/PlayerController.h"
+#include "Components/InputComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 ALavaGameMode::ALavaGameMode() {
-
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	PrimaryActorTick.bCanEverTick = false;
 }
 
 void ALavaGameMode::BeginPlay() {
@@ -18,14 +23,28 @@ void ALavaGameMode::BeginPlay() {
 	bGameOver = false;
 	Message = TEXT("");
 
-	// Timer fires every 1.0 second. Loops continuously (true)
-	GetWorld()->GetTimerManager().SetTimer(LevelTimer, this, &ALavaGameMode::HandleTimeExpired, 1.0f, true);
+	// Set timer for LevelSeconds. Calls HandleTimeExpired when time runs out
+	GetWorld()->GetTimerManager().SetTimer(LevelTimer, this, &ALavaGameMode::HandleTimeExpired, LevelSeconds, false);
 }
 
 void ALavaGameMode::EndPlay(const EEndPlayReason::Type Reason) {
 	GetWorld()->GetTimerManager().ClearTimer(LevelTimer);
 
 	Super::EndPlay(Reason);
+}
+
+void ALavaGameMode::Tick(float DeltaTime) {
+	Super::Tick(DeltaTime);
+
+	if (!bGameOver)
+	{
+		float TimeRemaining = GetTimeRemaining();
+
+		FString TimerMessage = FString::Printf(TEXT("Time Remaining: %.1f seconds"), TimeRemaining);
+
+		// TBD
+		GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Cyan, TimerMessage);
+	}
 }
 
 void ALavaGameMode::ReportKeyCollected() {
@@ -36,6 +55,11 @@ void ALavaGameMode::ReportKeyCollected() {
 	KeysCollected++;
 
 	Score += 200;
+
+	FString KeyCollectionMessage = FString::Printf(TEXT("Key %d/%d Collected"), KeysCollected, KeysRequired);
+
+	// TBD
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, KeyCollectionMessage);
 
 	if (KeysCollected > KeysRequired) {
 		KeysCollected = KeysRequired;
@@ -49,6 +73,11 @@ void ALavaGameMode::ReportLifeLost() {
 
 	LivesLeft--;
 	Score -= 100;
+
+	FString LivesLeftMessage = FString::Printf(TEXT("%d Lives Left"), LivesLeft);
+
+	// TBD
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, LivesLeftMessage);
 
 	if (LivesLeft <= 0) {
 		Message = TEXT("You died!");
@@ -104,7 +133,7 @@ void ALavaGameMode::EndGame(bool bWon) {
 		}
 	}
 
-	EndPlay(EEndPlayReason::LevelTransition);
+	//EndPlay(EEndPlayReason::LevelTransition);
 }
 
 void ALavaGameMode::HandleTimeExpired() {
@@ -112,3 +141,32 @@ void ALavaGameMode::HandleTimeExpired() {
 	EndGame(false);
 }
 
+void ALavaGameMode::HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) {
+	Super::HandleStartingNewPlayer_Implementation(NewPlayer);
+
+	if (NewPlayer) {
+
+		// Bind 'k' to OnDebugKeyPressed() through the player's input component
+		if (UInputComponent* IC = NewPlayer->InputComponent) {
+			IC->BindKey(EKeys::K, IE_Pressed, this, &ALavaGameMode::DebugGiveAllKeys);
+		}
+	}
+}
+
+void ALavaGameMode::DebugGiveAllKeys() {
+	KeysCollected = KeysRequired;
+
+	FString DebugMessage = FString::Printf(TEXT("%d/%d keys collected!"), KeysCollected, KeysRequired);
+
+	// Find all keys in the level
+	TArray<AActor*> AllKeys;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ALavaKey::StaticClass(), AllKeys);
+
+	for (AActor* Actor : AllKeys) {
+		if (ALavaKey* KeyActor = Cast<ALavaKey>(Actor)) {
+			KeyActor->DebugKeyPressed();
+		}
+	}
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, DebugMessage);
+}

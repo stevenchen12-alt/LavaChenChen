@@ -22,6 +22,10 @@ public:
 	/** Spin and bob, so the player can spot it from across the room. */
 	virtual void Tick(float DeltaTime) override;
 
+	// --- Added ---
+	UFUNCTION()
+	void DebugKeyPressed();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

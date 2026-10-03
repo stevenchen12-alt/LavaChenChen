@@ -21,7 +21,7 @@ ALavaKey::ALavaKey()
 	check(PickupRange != nullptr);
 
 	PickupRange->SetupAttachment(Mesh);
-	PickupRange->SetSphereRadius(32.f);
+	PickupRange->SetSphereRadius(200.f);
 	PickupRange->SetGenerateOverlapEvents(true);
 	PickupRange->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
@@ -86,4 +86,10 @@ void ALavaKey::HandleOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherA
 			PickupRange->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		}
 	}
+}
+
+void ALavaKey::DebugKeyPressed() {
+	Mesh->SetVisibility(false);
+	Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	PickupRange->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }

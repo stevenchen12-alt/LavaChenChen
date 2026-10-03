@@ -34,6 +34,10 @@ public:
     UFUNCTION(BlueprintPure, Category = "Rules")
     float GetTimeRemaining() const;
 
+    // --- Added ---
+    UFUNCTION(BlueprintCallable, Category = "Rules | Debug")
+    void DebugGiveAllKeys();
+
 protected:
     virtual void BeginPlay() override;
     virtual void EndPlay(const EEndPlayReason::Type Reason) override;
@@ -67,5 +71,9 @@ protected:
     FTimerHandle LevelTimer;
     
     // --- Added ---
+    virtual void Tick(float DeltaTime) override;
+
+    virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
+
     FString Message;
 };
