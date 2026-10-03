@@ -62,6 +62,8 @@ protected:
 	FVector LastSafeLocation;
 	FRotator LastSafeRotation;
 	FTimerHandle LastSafePosTimerHandle;
+	FTimerHandle FreezeTimerHandle;
+	float FreezeTime = 1.0f;
 	
 	UPROPERTY(EditAnywhere, Category="Tuning")
 	float SafeCheckInterval = 0.5f;
@@ -86,6 +88,9 @@ public:
 	
 	UFUNCTION()
 	void UpdateLastSafeLocation();
+	
+	UFUNCTION()
+	void UnfreezeInputs();
 	// Third Person camera
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	TObjectPtr<UCameraComponent> ThirdPersonCameraComponent;

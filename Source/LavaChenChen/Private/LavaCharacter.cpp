@@ -139,10 +139,25 @@ void ALavaCharacter::RespawnAtSafeLocation()
 		GameMode->ReportLifeLost();
 	}
 	
-	if (GetCharacterMovement())
+	GetWorldTimerManager().SetTimer(FreezeTimerHandle, this, &ALavaCharacter::UnfreezeInputs, FreezeTime, false);
+	if (APlayerController* PC = Cast<APlayerController>(GetController()))
 	{
-		GetCharacterMovement()->StopMovementImmediately();
+		DisableInput(PC);
+		FVector LastMovementVector = GetLastMovementInputVector();
+		LastMovementVector.Z += 2000.f;
+		LaunchCharacter(LastMovementVector, false, true);
 	}
-	
-	SetActorLocationAndRotation(LastSafeLocation, LastSafeRotation);
+}
+
+void ALavaCharacter::UnfreezeInputs()
+{
+	if (APlayerController* PC = Cast<APlayerController>(GetController()))
+	{	
+		if (GetCharacterMovement())
+		{
+			GetCharacterMovement()->StopMovementImmediately();
+		}
+		EnableInput(PC);
+		SetActorLocationAndRotation(LastSafeLocation, LastSafeRotation);
+	}
 }

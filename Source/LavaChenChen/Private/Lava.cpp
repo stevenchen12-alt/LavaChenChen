@@ -31,7 +31,6 @@ void ALava::BeginPlay()
 	
 	// Record StartZ as the actor's initial Z value;
 	StartZ = GetActorLocation().Z;
-	
 	// Directs the Volume collision box to redirect to HandleOverlap function whenever this (Lava) overlaps (with the pawn)
 	if (Volume)
 	{
@@ -63,7 +62,17 @@ void ALava::HandleOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActo
 		// Check if collision is with our LavaCharacter
 		if (ALavaCharacter* LavaCharacter = Cast<ALavaCharacter>(OtherActor))
 		{
-			LavaCharacter->RespawnAtSafeLocation();
+			if (!bIsProtected)
+			{
+				bIsProtected = true;
+				GetWorldTimerManager().SetTimer(ProtectedTimerHandle, this, &ALava::RemoveProtected, ProtectedTime, false);
+				LavaCharacter->RespawnAtSafeLocation();
+			}
 		} 
 	}
+}
+
+void ALava::RemoveProtected()
+{
+	bIsProtected = false;
 }

@@ -24,6 +24,8 @@ public:
 	/** How far the surface has risen since the game started. Drives the HUD. */
 	UFUNCTION(BlueprintPure, Category = "Lava")
 	float GetRiseHeight() const;
+	
+	bool bIsProtected;
 
 protected:
 	virtual void BeginPlay() override;
@@ -35,6 +37,9 @@ protected:
 					   UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
 					   bool bFromSweep, const FHitResult& Sweep);
 	
+	UFUNCTION()
+	void RemoveProtected();
+	
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	TObjectPtr<UStaticMeshComponent> Surface;
 
@@ -44,7 +49,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Tuning", meta = (ClampMin = "0.0", Units = "cm/s"))
 	float RiseRate = 40.f;
-
+	
 	/** Recorded at BeginPlay so GetRiseHeight has something to measure from. */
 	float StartZ = 0.f;
+	
+	float ProtectedTime = 1.2f;
+	FTimerHandle ProtectedTimerHandle;
 };
