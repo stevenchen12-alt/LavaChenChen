@@ -53,5 +53,5 @@ protected:
 	float BobHeight = 20.0f;
 
 	FVector InitialLocation;
-	bool isKeyCollected = false;
+	bool bIsKeyCollected = false;
 };
