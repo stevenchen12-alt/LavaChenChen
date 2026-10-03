@@ -4,6 +4,7 @@
 #include "LavaCharacter.h"
 
 #include "LavaGameMode.h"
+#include "Lava.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -77,6 +78,9 @@ void ALavaCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		
 		// Bind Look
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ALavaCharacter::Look);
+		
+		// Debug Key for 'l' to speed up lava
+		PlayerInputComponent->BindKey(EKeys::L, IE_Pressed, this, &ALavaCharacter::DebugModifyLavaSpeed);
 	}
 }
 
@@ -123,6 +127,14 @@ void ALavaCharacter::Look(const FInputActionValue& Value)
 	}
 }
 
+void ALavaCharacter::DebugModifyLavaSpeed()
+{
+	if (ALava* Lava = Cast<ALava>(UGameplayStatics::GetActorOfClass(GetWorld(), ALava::StaticClass())))
+	{
+		Lava->RiseRate *= 4.f; // Speed up by four times
+	}
+}
+
 void ALavaCharacter::UpdateLastSafeLocation()
 {
 	if (!GetCharacterMovement()->IsFalling())
@@ -161,3 +173,4 @@ void ALavaCharacter::UnfreezeInputs()
 		SetActorLocationAndRotation(LastSafeLocation, LastSafeRotation);
 	}
 }
+

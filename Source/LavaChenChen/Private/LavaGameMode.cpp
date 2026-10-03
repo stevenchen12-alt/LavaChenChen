@@ -154,8 +154,12 @@ void ALavaGameMode::EndGame(bool bWon) {
 }
 
 void ALavaGameMode::HandleTimeExpired() {
-	Message = TEXT("You ran out of time!");
-	EndGame(false);
+	LevelSeconds--;
+	if (LevelSeconds <= 0)
+	{
+		Message = TEXT("You ran out of time!");
+		EndGame(false);
+	}
 }
 
 void ALavaGameMode::HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) {

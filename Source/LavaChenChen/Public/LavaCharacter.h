@@ -91,6 +91,9 @@ public:
 	
 	UFUNCTION()
 	void UnfreezeInputs();
+	
+	UFUNCTION()
+	void DebugModifyLavaSpeed();
 	// Third Person camera
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	TObjectPtr<UCameraComponent> ThirdPersonCameraComponent;

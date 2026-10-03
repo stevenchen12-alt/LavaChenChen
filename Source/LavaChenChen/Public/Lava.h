@@ -26,6 +26,9 @@ public:
 	float GetRiseHeight() const;
 	
 	bool bIsProtected;
+	
+	UPROPERTY(EditAnywhere, Category = "Tuning", meta = (ClampMin = "0.0", Units = "cm/s"))
+	float RiseRate = 40.f;
 
 protected:
 	virtual void BeginPlay() override;
@@ -46,9 +49,6 @@ protected:
 	/** Sits just under the surface. This is what actually detects the player. */
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	TObjectPtr<UBoxComponent> Volume;
-
-	UPROPERTY(EditAnywhere, Category = "Tuning", meta = (ClampMin = "0.0", Units = "cm/s"))
-	float RiseRate = 40.f;
 	
 	/** Recorded at BeginPlay so GetRiseHeight has something to measure from. */
 	float StartZ = 0.f;
