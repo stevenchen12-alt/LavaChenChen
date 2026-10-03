@@ -3,12 +3,14 @@
 #include "RoofHatch.h"
 #include "LavaCharacter.h"
 #include "LavaGameMode.h"
+#include "Components/StaticMeshComponent.h"
+#include "Components/BoxComponent.h"
 
 // Sets default values
 ARoofHatch::ARoofHatch()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	// Create the roof hatch's mesh component
 	DoorFrameMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("DoorFrameMesh"));
@@ -22,11 +24,12 @@ ARoofHatch::ARoofHatch()
 	DoorMesh->SetupAttachment(DoorFrameMesh);
 
 	// Create the collider
-	CollisionRange = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionRange"));
+	CollisionRange = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionRange"));
 	check(CollisionRange != nullptr);
 
 	CollisionRange->SetupAttachment(DoorFrameMesh);
-	CollisionRange->SetSphereRadius(32.f);
+
+	CollisionRange->SetBoxExtent(FVector(50.f, 50.f, 30.f));
 	CollisionRange->SetGenerateOverlapEvents(true);
 	CollisionRange->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
@@ -60,6 +63,22 @@ void ARoofHatch::BeginPlay()
 void ARoofHatch::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (bIsOpening && DoorMesh) {
+		FRotator CurrentRotation = DoorMesh->GetRelativeRotation();
+		FRotator NewRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, DeltaTime, 5.0f);
+
+		DoorMesh->SetRelativeRotation(NewRotation);
+
+		if (NewRotation.Equals(TargetRotation, 0.5f)) {
+			bIsOpening = false;
+
+			// Cast the current game mode to LavaGameMode
+			if (ALavaGameMode* GameMode = Cast<ALavaGameMode>(GetWorld()->GetAuthGameMode())) {
+				GameMode->ReportHatchReached();
+			}
+		}
+	}
 }
 
 void ARoofHatch::HandleOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& Sweep) {
@@ -74,17 +93,7 @@ void ARoofHatch::HandleOverlap(UPrimitiveComponent* OverlappedComp, AActor* Othe
 			if (!bIsHatchOpened) {
 				OpenHatch();
 
-				// Cast the current game mode to LavaGameMode
-				if (ALavaGameMode* GameMode = Cast<ALavaGameMode>(GetWorld()->GetAuthGameMode())) {
-					GameMode->ReportHatchReached();
-				}
-
-				DoorFrameMesh->SetVisibility(false);
-				DoorFrameMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
-				DoorMesh->SetVisibility(false);
-				DoorMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
+				// ReportHatchedReached() is called in Tick(), after the door opening animation
 				CollisionRange->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			}
 		}

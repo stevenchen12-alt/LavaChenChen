@@ -35,15 +35,24 @@ void ALavaGameMode::EndPlay(const EEndPlayReason::Type Reason) {
 
 void ALavaGameMode::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
-
+	
+	// TBD
 	if (!bGameOver)
 	{
-		float TimeRemaining = GetTimeRemaining();
+		static float TimeSinceLastPrint = 0.0f;
+		TimeSinceLastPrint += DeltaTime;
+		
+		// 1 second intervals
+		if (TimeSinceLastPrint >= 1.0f) {
+			float TimeRemaining = GetTimeRemaining();
 
-		FString TimerMessage = FString::Printf(TEXT("Time Remaining: %.1f seconds"), TimeRemaining);
+			FString TimerMessage = FString::Printf(TEXT("Time Remaining: %.1f seconds"), TimeRemaining);
 
-		// TBD
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, TimerMessage);
+			GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Cyan, TimerMessage);
+
+			TimeSinceLastPrint = 0.0f;
+		}
+		
 	}
 }
 
@@ -107,7 +116,7 @@ void ALavaGameMode::EndGame(bool bWon) {
 	GetWorld()->GetTimerManager().PauseTimer(LevelTimer);
 
 	if (bWon) {
-		Score += FMath::FloorToInt(GetTimeRemaining());
+		Score += FMath::CeilToInt(GetTimeRemaining());
 		Message = TEXT("You escaped the lava!");
 	}
 
@@ -132,8 +141,6 @@ void ALavaGameMode::EndGame(bool bWon) {
 			}
 		}
 	}
-
-	//EndPlay(EEndPlayReason::LevelTransition);
 }
 
 void ALavaGameMode::HandleTimeExpired() {

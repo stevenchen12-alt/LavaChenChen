@@ -4,8 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Components/SphereComponent.h"
 #include "RoofHatch.generated.h"
+
+class UBoxComponent;
 
 UCLASS()
 class LAVACHENCHEN_API ARoofHatch : public AActor
@@ -32,7 +33,7 @@ protected:
 	TObjectPtr<UStaticMeshComponent> DoorMesh;
 
 	UPROPERTY(VisibleAnywhere, Category = "Components")
-	TObjectPtr<USphereComponent> CollisionRange;
+	TObjectPtr<UBoxComponent> CollisionRange;
 
 	// --- Added ---
 	bool bIsOpening = false;
@@ -45,4 +46,5 @@ public:
 	// --- Added ---
 	UFUNCTION()
 	void OpenHatch();
+	FRotator TargetRotation = FRotator(0.0f, 270.0f, 0.0f);
 };
