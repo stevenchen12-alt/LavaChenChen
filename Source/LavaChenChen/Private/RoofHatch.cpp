@@ -43,6 +43,7 @@ void ARoofHatch::BeginPlay()
 	Super::BeginPlay();
 
 	bIsOpening = false;
+	bIsHatchOpened = false;
 	
 	// Ensure we don't bind the overlap event more than once
 	CollisionRange->OnComponentBeginOverlap.RemoveAll(this);
@@ -69,24 +70,28 @@ void ARoofHatch::HandleOverlap(UPrimitiveComponent* OverlappedComp, AActor* Othe
 		// Make sure the colliding actor is the player character
 		if (ALavaCharacter* PlayerCharacter = Cast<ALavaCharacter>(OtherActor)) {
 
-			OpenHatch();
+			// Hatch has not been opened before
+			if (!bIsHatchOpened) {
+				OpenHatch();
 
-			// Cast the current game mode to LavaGameMode
-			if (ALavaGameMode* GameMode = Cast<ALavaGameMode>(GetWorld()->GetAuthGameMode())) {
-				GameMode->ReportHatchReached();
+				// Cast the current game mode to LavaGameMode
+				if (ALavaGameMode* GameMode = Cast<ALavaGameMode>(GetWorld()->GetAuthGameMode())) {
+					GameMode->ReportHatchReached();
+				}
+
+				DoorFrameMesh->SetVisibility(false);
+				DoorFrameMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+				DoorMesh->SetVisibility(false);
+				DoorMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+				CollisionRange->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			}
-
-			DoorFrameMesh->SetVisibility(false);
-			DoorFrameMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
-			DoorMesh->SetVisibility(false);
-			DoorMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
-			CollisionRange->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		}
 	}
 }
 
 void ARoofHatch::OpenHatch() {
+	bIsHatchOpened = true;
 	bIsOpening = true;
 }

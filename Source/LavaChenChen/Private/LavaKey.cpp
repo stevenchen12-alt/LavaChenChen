@@ -48,7 +48,7 @@ void ALavaKey::BeginPlay()
 	Mesh->SetVisibility(true);
 	PickupRange->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
-	isKeyCollected = false;
+	bIsKeyCollected = false;
 }
 
 // Called every frame
@@ -79,8 +79,8 @@ void ALavaKey::HandleOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherA
 		if (ALavaCharacter* PlayerCharacter = Cast<ALavaCharacter>(OtherActor)) {
 
 			// Key has not been collected before
-			if (!isKeyCollected) {
-				isKeyCollected = true;
+			if (!bIsKeyCollected) {
+				bIsKeyCollected = true;
 
 				// Cast the current game mode to LavaGameMode
 				if (ALavaGameMode* GameMode = Cast<ALavaGameMode>(GetWorld()->GetAuthGameMode())) {

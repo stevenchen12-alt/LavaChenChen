@@ -36,6 +36,7 @@ protected:
 
 	// --- Added ---
 	bool bIsOpening = false;
+	bool bIsHatchOpened = false;
 
 public:	
 	// Called every frame
