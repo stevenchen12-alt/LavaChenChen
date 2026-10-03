@@ -44,6 +44,8 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Tuning", meta = (Units = "deg/s"))
 	float SpinRate = 90.f;
 
+	// --- Added ---
+
 	UPROPERTY(EditAnywhere, Category = "Tuning")
 	float BobSpeed = 5.0f;
 
@@ -51,4 +53,5 @@ protected:
 	float BobHeight = 20.0f;
 
 	FVector InitialLocation;
+	bool isKeyCollected = false;
 };
