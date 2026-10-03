@@ -11,7 +11,7 @@
 
 ALavaGameMode::ALavaGameMode() {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 }
 
 void ALavaGameMode::BeginPlay() {
@@ -24,7 +24,7 @@ void ALavaGameMode::BeginPlay() {
 	Message = TEXT("");
 
 	// Set timer for LevelSeconds. Calls HandleTimeExpired when time runs out
-	GetWorld()->GetTimerManager().SetTimer(LevelTimer, this, &ALavaGameMode::HandleTimeExpired, 1, false);
+	GetWorld()->GetTimerManager().SetTimer(LevelTimer, this, &ALavaGameMode::HandleTimeExpired, LevelSeconds, false);
 }
 
 void ALavaGameMode::EndPlay(const EEndPlayReason::Type Reason) {
@@ -43,7 +43,7 @@ void ALavaGameMode::Tick(float DeltaTime) {
 		FString TimerMessage = FString::Printf(TEXT("Time Remaining: %.1f seconds"), TimeRemaining);
 
 		// TBD
-		GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Cyan, TimerMessage);
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, TimerMessage);
 	}
 }
 
@@ -137,12 +137,8 @@ void ALavaGameMode::EndGame(bool bWon) {
 }
 
 void ALavaGameMode::HandleTimeExpired() {
-	LevelSeconds -= 1;
-	if (LevelSeconds <= 0)
-	{
-		Message = TEXT("You ran out of time!");
-		EndGame(false);
-	}
+	Message = TEXT("You ran out of time!");
+	EndGame(false);
 }
 
 void ALavaGameMode::HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) {
