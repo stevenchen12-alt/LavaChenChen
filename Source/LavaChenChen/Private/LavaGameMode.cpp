@@ -24,7 +24,7 @@ void ALavaGameMode::BeginPlay() {
 	Message = TEXT("");
 
 	// Set timer for LevelSeconds. Calls HandleTimeExpired when time runs out
-	GetWorld()->GetTimerManager().SetTimer(LevelTimer, this, &ALavaGameMode::HandleTimeExpired, 1, false);
+	GetWorld()->GetTimerManager().SetTimer(LevelTimer, this, &ALavaGameMode::HandleTimeExpired, 1, true);
 }
 
 void ALavaGameMode::EndPlay(const EEndPlayReason::Type Reason) {
@@ -96,7 +96,17 @@ void ALavaGameMode::ReportHatchReached() {
 }
 
 float ALavaGameMode::GetTimeRemaining() const {
-	return GetWorld()->GetTimerManager().GetTimerRemaining(LevelTimer);
+	return LevelSeconds;
+}
+
+int32 ALavaGameMode::GetScore() 
+{
+	return Score;
+}
+
+int32 ALavaGameMode::GetLivesLeft() const
+{
+	return LivesLeft;
 }
 
 void ALavaGameMode::EndGame(bool bWon) {

@@ -33,7 +33,12 @@ public:
 
     UFUNCTION(BlueprintPure, Category = "Rules")
     float GetTimeRemaining() const;
-
+	
+	UFUNCTION(BlueprintPure, Category = "Rules")
+	int32 GetLivesLeft() const;
+	
+	UFUNCTION(BlueprintPure, Category = "Rules")
+	int32 GetScore();
     // --- Added ---
     UFUNCTION(BlueprintCallable, Category = "Rules | Debug")
     void DebugGiveAllKeys();
