@@ -24,7 +24,7 @@ void ALavaGameMode::BeginPlay() {
 	Message = TEXT("");
 
 	// Set timer for LevelSeconds. Calls HandleTimeExpired when time runs out
-	GetWorld()->GetTimerManager().SetTimer(LevelTimer, this, &ALavaGameMode::HandleTimeExpired, LevelSeconds, false);
+	GetWorld()->GetTimerManager().SetTimer(LevelTimer, this, &ALavaGameMode::HandleTimeExpired, 1, false);
 }
 
 void ALavaGameMode::EndPlay(const EEndPlayReason::Type Reason) {
@@ -137,8 +137,12 @@ void ALavaGameMode::EndGame(bool bWon) {
 }
 
 void ALavaGameMode::HandleTimeExpired() {
-	Message = TEXT("You ran out of time!");
-	EndGame(false);
+	LevelSeconds -= 1;
+	if (LevelSeconds <= 0)
+	{
+		Message = TEXT("You ran out of time!");
+		EndGame(false);
+	}
 }
 
 void ALavaGameMode::HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) {
