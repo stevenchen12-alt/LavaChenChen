@@ -49,25 +49,6 @@ void ALavaGameMode::Tick(float DeltaTime) {
 			LavaAboveHatch();
 		}
 	}
-
-	// TBD
-	if (!bGameOver)
-	{
-		static float TimeSinceLastPrint = 0.0f;
-		TimeSinceLastPrint += DeltaTime;
-		
-		// 1 second intervals
-		if (TimeSinceLastPrint >= 1.0f) {
-			float TimeRemaining = GetTimeRemaining();
-
-			FString TimerMessage = FString::Printf(TEXT("Time Remaining: %.1f seconds"), TimeRemaining);
-
-			GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Cyan, TimerMessage);
-
-			TimeSinceLastPrint = 0.0f;
-		}
-		
-	}
 }
 
 void ALavaGameMode::ReportKeyCollected() {
@@ -78,11 +59,6 @@ void ALavaGameMode::ReportKeyCollected() {
 	KeysCollected++;
 
 	Score += 200;
-
-	FString KeyCollectionMessage = FString::Printf(TEXT("Key %d/%d Collected"), KeysCollected, KeysRequired);
-
-	// TBD
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, KeyCollectionMessage);
 
 	if (KeysCollected > KeysRequired) {
 		KeysCollected = KeysRequired;
@@ -96,11 +72,6 @@ void ALavaGameMode::ReportLifeLost() {
 
 	LivesLeft--;
 	Score -= 100;
-
-	FString LivesLeftMessage = FString::Printf(TEXT("%d Lives Left"), LivesLeft);
-
-	// TBD
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, LivesLeftMessage);
 
 	if (LivesLeft <= 0) {
 		Message = TEXT("You died!");
