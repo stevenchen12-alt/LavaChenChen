@@ -5,6 +5,8 @@
 #include "Blueprint/UserWidget.h"
 #include "ResultWidget.h"
 #include "LavaKey.h"
+#include "RoofHatch.h"
+#include "Lava.h"
 #include "GameFramework/PlayerController.h"
 #include "Components/InputComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -16,6 +18,9 @@ ALavaGameMode::ALavaGameMode() {
 
 void ALavaGameMode::BeginPlay() {
 	Super::BeginPlay();
+
+	RoofHatchActor = UGameplayStatics::GetActorOfClass(GetWorld(), ARoofHatch::StaticClass());
+	LavaActor = UGameplayStatics::GetActorOfClass(GetWorld(), ALava::StaticClass());
 
 	KeysCollected = 0;
 	LivesLeft = StartingLives;
@@ -36,6 +41,15 @@ void ALavaGameMode::EndPlay(const EEndPlayReason::Type Reason) {
 void ALavaGameMode::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 	
+	if (RoofHatchActor) {
+		float RoofHatchZ = RoofHatchActor->GetActorLocation().Z;
+		float LavaZ = LavaActor->GetActorLocation().Z;
+
+		if (LavaZ >= RoofHatchZ && !bGameOver) {
+			LavaAboveHatch();
+		}
+	}
+
 	// TBD
 	if (!bGameOver)
 	{
@@ -166,10 +180,13 @@ void ALavaGameMode::HandleStartingNewPlayer_Implementation(APlayerController* Ne
 	Super::HandleStartingNewPlayer_Implementation(NewPlayer);
 
 	if (NewPlayer) {
-
-		// Bind 'k' to OnDebugKeyPressed() through the player's input component
 		if (UInputComponent* IC = NewPlayer->InputComponent) {
+
+			// Bind 'k' to DebugGiveAllKeys() through the player's input component
 			IC->BindKey(EKeys::K, IE_Pressed, this, &ALavaGameMode::DebugGiveAllKeys);
+
+			// Bind 'h' to LavaAboveHatch() through the player's input component
+			IC->BindKey(EKeys::H, IE_Pressed, this, &ALavaGameMode::LavaAboveHatch);
 		}
 	}
 }
@@ -190,4 +207,10 @@ void ALavaGameMode::DebugGiveAllKeys() {
 	}
 
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, DebugMessage);
+}
+
+void ALavaGameMode::LavaAboveHatch() {
+	Message = "Lava rose above the hatch!";
+
+	EndGame(false);
 }

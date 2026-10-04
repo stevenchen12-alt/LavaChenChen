@@ -39,9 +39,13 @@ public:
 	
 	UFUNCTION(BlueprintPure, Category = "Rules")
 	int32 GetScore();
+
     // --- Added ---
     UFUNCTION(BlueprintCallable, Category = "Rules | Debug")
     void DebugGiveAllKeys();
+
+    UFUNCTION(BlueprintCallable, Category = "Rules | Debug")
+    void LavaAboveHatch();
 
 protected:
     virtual void BeginPlay() override;
@@ -76,6 +80,12 @@ protected:
     FTimerHandle LevelTimer;
     
     // --- Added ---
+    UPROPERTY(EditAnywhere, Category = "References")
+    TObjectPtr<AActor> RoofHatchActor;
+
+    UPROPERTY(EditAnywhere, Category = "References")
+    TObjectPtr<AActor> LavaActor;
+
     virtual void Tick(float DeltaTime) override;
 
     virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
