@@ -45,6 +45,14 @@ void ALava::Tick(float DeltaTime)
 	
 	FVector CurrentLocation = GetActorLocation();
 	CurrentLocation.Z += RiseRate * DeltaTime;
+	float MaxBuildingHeight = 3178.f;
+	if (CurrentLocation.Z >= MaxBuildingHeight)
+	{
+		if (ALavaGameMode* GameMode = Cast<ALavaGameMode>(UGameplayStatics::GetGameMode(this)))
+		{
+			GameMode->LavaAboveHatch();
+		}
+	}
 	SetActorLocation(CurrentLocation);
 }
 
