@@ -26,6 +26,9 @@ public:
 	UFUNCTION()
 	void DebugKeyPressed();
 
+	UFUNCTION() 
+	void UnlockKey();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -54,4 +57,5 @@ protected:
 
 	FVector InitialLocation;
 	bool bIsKeyCollected = false;
+	bool bIsKeyLocked = true;
 };

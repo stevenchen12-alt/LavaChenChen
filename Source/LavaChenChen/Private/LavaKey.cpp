@@ -78,8 +78,8 @@ void ALavaKey::HandleOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherA
 		// Make sure the colliding actor is the player character
 		if (ALavaCharacter* PlayerCharacter = Cast<ALavaCharacter>(OtherActor)) {
 
-			// Key has not been collected before
-			if (!bIsKeyCollected) {
+			// Key has not been collected before and key is not locked
+			if (!bIsKeyCollected && !bIsKeyLocked) {
 				bIsKeyCollected = true;
 
 				// Cast the current game mode to LavaGameMode
@@ -91,6 +91,10 @@ void ALavaKey::HandleOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherA
 				Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 				PickupRange->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			}
+
+			else if (bIsKeyLocked) {
+				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("Key is locked!"));
+			}
 		}
 	}
 }
@@ -99,4 +103,8 @@ void ALavaKey::DebugKeyPressed() {
 	Mesh->SetVisibility(false);
 	Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	PickupRange->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
+void ALavaKey::UnlockKey() {
+	bIsKeyLocked = false;
 }
