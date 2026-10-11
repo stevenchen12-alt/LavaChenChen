@@ -1,6 +1,7 @@
 // ResultWidget.cpp
 
 #include "ResultWidget.h"
+#include "LavaGameInstance.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
 #include "Kismet/GameplayStatics.h"
@@ -10,7 +11,7 @@ void UResultWidget::NativeConstruct() {
 
 	// Connect the restart button to OnPlayAgainClicked
 	if (RestartButton) {
-		RestartButton->OnClicked.AddDynamic(this, &UResultWidget::RestartLevel);
+		RestartButton->OnClicked.AddDynamic(this, &UResultWidget::NextLevel);
 	}
 }
 
@@ -45,3 +46,35 @@ void UResultWidget::RestartLevel() {
 
 }
 
+void UResultWidget::NextLevel() {
+	if (APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0)) {
+		PC->SetShowMouseCursor(false);
+
+		FInputModeGameOnly InputMode;
+		PC->SetInputMode(InputMode);
+	}
+
+	FName NextLevelName = NAME_None;
+
+	ULavaGameInstance* LavaGameInstance = Cast<ULavaGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+
+	if (LavaGameInstance) {
+		switch (LavaGameInstance->BuildingIndex) {
+			case 0:
+				NextLevelName = TEXT("BTHS");
+				break;
+			
+			case 1:
+				NextLevelName = TEXT("ArchesNationalParkMap");
+				break;
+		}
+			
+		if (!NextLevelName.IsNone()) {
+			UGameplayStatics::OpenLevel(this, NextLevelName, false);
+		}
+
+		else {
+			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Cannot open the next level!"));
+		}
+	}
+}

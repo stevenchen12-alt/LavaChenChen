@@ -7,6 +7,7 @@
 #include "LavaKey.h"
 #include "RoofHatch.h"
 #include "Lava.h"
+#include "LavaGameInstance.h"
 #include "GameFramework/PlayerController.h"
 #include "Components/InputComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -24,9 +25,17 @@ void ALavaGameMode::BeginPlay() {
 
 	KeysCollected = 0;
 	LivesLeft = StartingLives;
-	Score = 0;
 	bGameOver = false;
 	Message = TEXT("");
+
+	Score = 0;
+	
+	// Get the score of the previous level (or 0, if it's the first level)
+	ULavaGameInstance* LavaGameInstance = Cast<ULavaGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+
+	if (LavaGameInstance) {
+		Score = LavaGameInstance->Score;
+	}
 
 	// Set timer for LevelSeconds. Calls HandleTimeExpired when time runs out
 	GetWorld()->GetTimerManager().SetTimer(LevelTimer, this, &ALavaGameMode::HandleTimeExpired, 1, true);
@@ -110,12 +119,22 @@ void ALavaGameMode::EndGame(bool bWon) {
 
 	GetWorld()->GetTimerManager().PauseTimer(LevelTimer);
 
+	bGameOver = true;
+
 	if (bWon) {
 		Score += FMath::CeilToInt(GetTimeRemaining());
 		Message = TEXT("You escaped the lava!");
 	}
 
-	bGameOver = true;
+	// Add the score to the game instance
+	ULavaGameInstance* LavaGameInstance = Cast<ULavaGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+
+	if (LavaGameInstance) {
+		LavaGameInstance->AddScore(Score);
+
+		// Increment to the next level (if the level is the last level, it will make the level index 0)
+		LavaGameInstance->NextLevel();
+	}
 
 	if (ResultWidgetClass) {
 		UResultWidget* ResultWidget = CreateWidget<UResultWidget>(GetWorld(), ResultWidgetClass);
@@ -158,6 +177,9 @@ void ALavaGameMode::HandleStartingNewPlayer_Implementation(APlayerController* Ne
 
 			// Bind 'h' to LavaAboveHatch() through the player's input component
 			IC->BindKey(EKeys::H, IE_Pressed, this, &ALavaGameMode::LavaAboveHatch);
+
+			// Bind 'n' to DebugNextLevel() through the player's input component
+			IC->BindKey(EKeys::N, IE_Pressed, this, &ALavaGameMode::DebugNextLevel);
 		}
 	}
 }
@@ -184,4 +206,41 @@ void ALavaGameMode::LavaAboveHatch() {
 	Message = "Lava rose above the hatch!";
 
 	EndGame(false);
+}
+
+void ALavaGameMode::DebugNextLevel() {
+	bGameOver = true;
+
+	Score = 600;
+	Message = TEXT("You escaped the lava!");
+
+	// Add the score to the game instance
+	ULavaGameInstance* LavaGameInstance = Cast<ULavaGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+
+	if (LavaGameInstance) {
+		LavaGameInstance->AddScore(Score);
+
+		// Increment to the next level (if the level is the last level, it will make the level index 0)
+		LavaGameInstance->NextLevel();
+	}
+
+	if (ResultWidgetClass) {
+		UResultWidget* ResultWidget = CreateWidget<UResultWidget>(GetWorld(), ResultWidgetClass);
+
+		if (ResultWidget) {
+			ResultWidget->SetupResultScreen(true, Score, Message);
+
+			// Show the widget
+			ResultWidget->AddToViewport();
+
+			if (APlayerController* PC = GetWorld()->GetFirstPlayerController()) {
+				PC->SetShowMouseCursor(true);
+
+				// Swap input mode to UI only to be able to click on the widget
+				FInputModeUIOnly InputMode;
+				InputMode.SetWidgetToFocus(ResultWidget->TakeWidget());
+				PC->SetInputMode(InputMode);
+			}
+		}
+	}
 }

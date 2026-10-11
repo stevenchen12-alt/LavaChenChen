@@ -24,6 +24,9 @@ protected:
 	UFUNCTION()
 	void RestartLevel();
 
+	UFUNCTION()
+	void NextLevel();
+
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> RestartButton;
 

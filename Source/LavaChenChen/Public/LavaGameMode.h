@@ -47,6 +47,9 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Rules | Debug")
     void LavaAboveHatch();
 
+    UFUNCTION(BlueprintCallable, Category = "Rules | Debug")
+    void DebugNextLevel();
+
 protected:
     virtual void BeginPlay() override;
     virtual void EndPlay(const EEndPlayReason::Type Reason) override;
