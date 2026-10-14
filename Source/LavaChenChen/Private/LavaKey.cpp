@@ -154,6 +154,8 @@ void ALavaKey::DebugKeyPressed() {
 
 	CageMesh3->SetVisibility(false);
 	CageMesh3->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	
 }
 
 void ALavaKey::UnlockKey() {

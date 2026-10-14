@@ -190,8 +190,11 @@ void ALavaGameMode::HandleStartingNewPlayer_Implementation(APlayerController* Ne
 }
 
 void ALavaGameMode::DebugGiveAllKeys() {
-	KeysCollected = KeysRequired;
-
+	while (KeysCollected < KeysRequired) {
+		Score += 200;
+		KeysCollected++;
+	}
+	
 	FString DebugMessage = FString::Printf(TEXT("%d/%d keys collected!"), KeysCollected, KeysRequired);
 
 	// Find all keys in the level
