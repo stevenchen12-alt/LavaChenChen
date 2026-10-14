@@ -39,6 +39,9 @@ public:
 	
 	UFUNCTION(BlueprintPure, Category = "Rules")
 	int32 GetScore();
+	
+	UFUNCTION(BlueprintPure, Category = "Rules")
+	int32 GetKeysCollected();
 
     // --- Added ---
     UFUNCTION(BlueprintCallable, Category = "Rules | Debug")

@@ -53,3 +53,13 @@ int32 ALavaHUD::GetLivesRemaining()
 	}
 	return 0;
 }
+
+int32 ALavaHUD::GetKeysCollected()
+{
+	if (ALavaGameMode* GameMode = Cast<ALavaGameMode>(UGameplayStatics::GetGameMode(GetWorld())))
+	{
+		return GameMode->GetKeysCollected();
+	}
+	return 0;
+}
+

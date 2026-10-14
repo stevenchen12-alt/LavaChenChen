@@ -41,4 +41,6 @@ public:
 	UFUNCTION(BlueprintPure, Category = "HUD Data")
 	int32 GetLivesRemaining();
 	
+	UFUNCTION(BlueprintPure, Category = "HUD Data")
+	int32 GetKeysCollected();
 };

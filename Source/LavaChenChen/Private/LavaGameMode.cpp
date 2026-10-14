@@ -112,6 +112,11 @@ int32 ALavaGameMode::GetLivesLeft() const
 	return LivesLeft;
 }
 
+ int32 ALavaGameMode::GetKeysCollected()
+{
+	return KeysCollected;
+}
+
 void ALavaGameMode::EndGame(bool bWon) {
 	if (bGameOver) {
 		return;
