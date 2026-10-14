@@ -29,6 +29,12 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	TObjectPtr<UStaticMeshComponent> Mesh;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Components")
+	TObjectPtr<UMaterialInterface> NotHitMaterial;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Components")
+	TObjectPtr<UMaterialInterface> HitMaterial;
+
 	UPROPERTY(EditInstanceOnly, Category = "Target")
 	ALavaKey* LinkedKey;
 

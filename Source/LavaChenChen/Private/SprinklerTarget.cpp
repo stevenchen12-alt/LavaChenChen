@@ -45,23 +45,18 @@ void ASprinklerTarget::HandleHit(UPrimitiveComponent* HitComp, AActor* OtherActo
 		return;
 	}
 
-	//if (OtherActor && OtherActor->IsA(AThrowable::StaticClass())) {
-	if (OtherActor) { // Remove this line and uncomment the one above when AThrowable is created
+	//if (OtherActor && OtherActor->IsA(AExtinguisher::StaticClass())) {
+	if (OtherActor) { // Remove this line and uncomment the one above when AExtinguisher is created
 		bHasBeenHit = true;
+
+		// Change the mesh or the material to look like it was hit
+		if (Mesh && HitMaterial) {
+			Mesh->SetMaterial(0, HitMaterial);
+		}
 
 		if (LinkedKey) {
 			LinkedKey->UnlockKey();
 		}
-
-		// Change the mesh or the material to look like it was hit
-		/*
-		* TODO:
-		* 
-		* Cabinet/cage the key is locked in pops open
-		* Key tips over and falls somewhere reachable
-		* Change the mesh or the material to look like it was hit
-		*/ 
-
 
 		Mesh->OnComponentHit.RemoveDynamic(this, &ASprinklerTarget::HandleHit);
 	}
