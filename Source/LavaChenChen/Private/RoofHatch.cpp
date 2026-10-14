@@ -89,6 +89,14 @@ void ARoofHatch::HandleOverlap(UPrimitiveComponent* OverlappedComp, AActor* Othe
 		// Make sure the colliding actor is the player character
 		if (ALavaCharacter* PlayerCharacter = Cast<ALavaCharacter>(OtherActor)) {
 
+			// If player does not have all keys, don't show the opening hatch animation
+			if (ALavaGameMode* GameMode = Cast<ALavaGameMode>(GetWorld()->GetAuthGameMode())) {
+				if (GameMode->HasAllKeys() == false) {
+					GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("You need all three keys to enter the hatch!"));
+					return;
+				}
+			}
+
 			// Hatch has not been opened before
 			if (!bIsHatchOpened) {
 				OpenHatch();
