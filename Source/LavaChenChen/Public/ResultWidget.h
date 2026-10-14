@@ -31,6 +31,9 @@ protected:
 	TObjectPtr<UButton> RestartButton;
 
 	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UButton> NextButton;
+
+	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> ResultTitleText;
 
 	UPROPERTY(meta = (BindWidget))

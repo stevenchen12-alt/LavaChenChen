@@ -9,9 +9,14 @@
 void UResultWidget::NativeConstruct() {
 	Super::NativeConstruct();
 
-	// Connect the restart button to OnPlayAgainClicked
+	// Connect the restart button to RestartLevel()
 	if (RestartButton) {
-		RestartButton->OnClicked.AddDynamic(this, &UResultWidget::NextLevel);
+		RestartButton->OnClicked.AddDynamic(this, &UResultWidget::RestartLevel);
+	}
+
+	// Connect the next button to NextLevel()
+	if (NextButton) {
+		NextButton->OnClicked.AddDynamic(this, &UResultWidget::NextLevel);
 	}
 }
 
@@ -19,10 +24,26 @@ void UResultWidget::SetupResultScreen(bool bWon, int32 Score, FString& Message) 
 	if (ResultTitleText) {
 		if (bWon) {
 			ResultTitleText->SetText(FText::FromString("You Win!"));
+
+			if (RestartButton) {
+				RestartButton->SetVisibility(ESlateVisibility::Collapsed);
+			}
+
+			if (NextButton) {
+				NextButton->SetVisibility(ESlateVisibility::Visible);
+			}
 		}
 
 		else {
 			ResultTitleText->SetText(FText::FromString("You Lost!"));
+
+			if (RestartButton) {
+				RestartButton->SetVisibility(ESlateVisibility::Visible);
+			}
+
+			if (NextButton) {
+				NextButton->SetVisibility(ESlateVisibility::Collapsed);
+			}
 		}
 	}
 
