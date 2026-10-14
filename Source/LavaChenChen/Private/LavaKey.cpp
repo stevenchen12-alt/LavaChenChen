@@ -11,16 +11,16 @@ ALavaKey::ALavaKey()
 	PrimaryActorTick.bCanEverTick = true;
 
 	// Create the key's mesh component
-	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("KeyMesh"));
-	check(Mesh != nullptr);
+	KeyMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("KeyMesh"));
+	check(KeyMesh != nullptr);
 
-	SetRootComponent(Mesh);
+	SetRootComponent(KeyMesh);
 
 	// Create the collider
 	PickupRange = CreateDefaultSubobject<USphereComponent>(TEXT("PickupRange"));
 	check(PickupRange != nullptr);
 
-	PickupRange->SetupAttachment(Mesh);
+	PickupRange->SetupAttachment(KeyMesh);
 	PickupRange->SetSphereRadius(200.f);
 	PickupRange->SetGenerateOverlapEvents(true);
 	PickupRange->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
@@ -30,6 +30,21 @@ ALavaKey::ALavaKey()
 
 	// Generate an overlap for any pawns
 	PickupRange->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+
+	CageMesh1 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CageMesh1"));
+	check(CageMesh1 != nullptr);
+
+	CageMesh1->SetupAttachment(KeyMesh);
+
+	CageMesh2 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CageMesh2"));
+	check(CageMesh2 != nullptr);
+
+	CageMesh2->SetupAttachment(CageMesh1);
+
+	CageMesh3 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CageMesh3"));
+	check(CageMesh3 != nullptr);
+
+	CageMesh3->SetupAttachment(CageMesh2);
 }
 
 // Called when the game starts or when spawned
@@ -45,10 +60,34 @@ void ALavaKey::BeginPlay()
 
 	InitialLocation = GetActorLocation();
 
-	Mesh->SetVisibility(true);
+	KeyMesh->SetVisibility(true);
 	PickupRange->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
+	if (bIsKeyOriginallyLocked) {
+		CageMesh1->SetVisibility(true);
+		CageMesh1->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+
+		CageMesh2->SetVisibility(true);
+		CageMesh2->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+
+		CageMesh3->SetVisibility(true);
+		CageMesh3->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	}
+
+	else {
+		CageMesh1->SetVisibility(false);
+		CageMesh1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+		CageMesh2->SetVisibility(false);
+		CageMesh2->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+		CageMesh3->SetVisibility(false);
+		CageMesh3->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+	
+
 	bIsKeyCollected = false;
+	bIsKeyLocked = bIsKeyOriginallyLocked;
 }
 
 // Called every frame
@@ -87,8 +126,8 @@ void ALavaKey::HandleOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherA
 					GameMode->ReportKeyCollected();
 				}
 
-				Mesh->SetVisibility(false);
-				Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+				KeyMesh->SetVisibility(false);
+				KeyMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 				PickupRange->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			}
 
@@ -100,11 +139,39 @@ void ALavaKey::HandleOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherA
 }
 
 void ALavaKey::DebugKeyPressed() {
-	Mesh->SetVisibility(false);
-	Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	KeyMesh->SetVisibility(false);
+	KeyMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	PickupRange->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	CageMesh1->SetVisibility(false);
+	CageMesh1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	CageMesh2->SetVisibility(false);
+	CageMesh2->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	CageMesh3->SetVisibility(false);
+	CageMesh3->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void ALavaKey::UnlockKey() {
 	bIsKeyLocked = false;
+
+	if (bIsKeyOriginallyLocked) {
+
+		// The cage the key is locked in disappears
+		if (CageMesh1) {
+			CageMesh1->SetVisibility(false);
+			CageMesh1->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		}
+
+		if (CageMesh2) {
+			CageMesh2->SetVisibility(false);
+			CageMesh2->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		}
+
+		if (CageMesh3) {
+			CageMesh3->SetVisibility(false);
+			CageMesh3->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		}
+	}
 }

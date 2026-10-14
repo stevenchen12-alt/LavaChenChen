@@ -39,10 +39,19 @@ protected:
 		bool bFromSweep, const FHitResult& Sweep);
 
 	UPROPERTY(VisibleAnywhere, Category = "Components")
-	TObjectPtr<UStaticMeshComponent> Mesh;
+	TObjectPtr<UStaticMeshComponent> KeyMesh;
 
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	TObjectPtr<USphereComponent> PickupRange;
+
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	TObjectPtr<UStaticMeshComponent> CageMesh1;
+
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	TObjectPtr<UStaticMeshComponent> CageMesh2;
+
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	TObjectPtr<UStaticMeshComponent> CageMesh3;
 
 	UPROPERTY(EditAnywhere, Category = "Tuning", meta = (Units = "deg/s"))
 	float SpinRate = 90.f;
@@ -57,5 +66,9 @@ protected:
 
 	FVector InitialLocation;
 	bool bIsKeyCollected = false;
+	
+	UPROPERTY(EditAnywhere, Category = "Tuning")
+	bool bIsKeyOriginallyLocked = true;
+
 	bool bIsKeyLocked = true;
 };
