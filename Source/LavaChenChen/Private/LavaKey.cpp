@@ -66,12 +66,15 @@ void ALavaKey::BeginPlay()
 	if (bIsKeyOriginallyLocked) {
 		CageMesh1->SetVisibility(true);
 		CageMesh1->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		CageMesh1->SetCollisionResponseToAllChannels(ECR_Block);
 
 		CageMesh2->SetVisibility(true);
 		CageMesh2->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		CageMesh2->SetCollisionResponseToAllChannels(ECR_Block);
 
 		CageMesh3->SetVisibility(true);
 		CageMesh3->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		CageMesh3->SetCollisionResponseToAllChannels(ECR_Block);
 	}
 
 	else {
