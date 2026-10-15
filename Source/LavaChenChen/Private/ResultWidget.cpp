@@ -82,11 +82,11 @@ void UResultWidget::NextLevel() {
 	if (LavaGameInstance) {
 		switch (LavaGameInstance->BuildingIndex) {
 			case 0:
-				NextLevelName = TEXT("BTHS");
+				NextLevelName = TEXT("/Game/Maps/BTHS");
 				break;
 			
 			case 1:
-				NextLevelName = TEXT("ArchesNationalParkMap");
+				NextLevelName = TEXT("/Game/Maps/ArchesNationalParkMap");
 				break;
 		}
 			
