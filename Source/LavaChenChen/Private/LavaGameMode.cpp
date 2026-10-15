@@ -8,6 +8,7 @@
 #include "RoofHatch.h"
 #include "Lava.h"
 #include "LavaGameInstance.h"
+#include "LavaCharacter.h"
 #include "GameFramework/PlayerController.h"
 #include "Components/InputComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -185,6 +186,9 @@ void ALavaGameMode::HandleStartingNewPlayer_Implementation(APlayerController* Ne
 
 			// Bind 'n' to DebugNextLevel() through the player's input component
 			IC->BindKey(EKeys::N, IE_Pressed, this, &ALavaGameMode::DebugNextLevel);
+
+			// Bind 't' to TeleportToHatch() through the player's input component
+			IC->BindKey(EKeys::T, IE_Pressed, this, &ALavaGameMode::TeleportToHatch);
 		}
 	}
 }
@@ -248,6 +252,35 @@ void ALavaGameMode::DebugNextLevel() {
 				FInputModeUIOnly InputMode;
 				InputMode.SetWidgetToFocus(ResultWidget->TakeWidget());
 				PC->SetInputMode(InputMode);
+			}
+		}
+	}
+}
+
+void ALavaGameMode::TeleportToHatch() {
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, TEXT("Pressed 'T'!"));
+
+	// If the map is arches
+	FString CurrentMapName = FPaths::GetBaseFilename(GetWorld()->GetMapName());
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, CurrentMapName);
+
+	if (CurrentMapName.Contains(TEXT("ArchesNationalParkMap"))) {
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, TEXT("This is the arches map"));
+
+		AActor* RoofHatch = UGameplayStatics::GetActorOfClass(GetWorld(), ARoofHatch::StaticClass());
+
+		if (RoofHatch) {
+			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, TEXT("Roof Hatch exists!"));
+
+			ALavaCharacter* PlayerCharacter = Cast<ALavaCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+
+			if (PlayerCharacter) {
+				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, TEXT("Player exists"));
+
+				FVector TargetLocation = RoofHatch->GetActorLocation() + FVector(100.0f, 0.0f, 0.0f);
+
+				PlayerCharacter->SetActorLocation(TargetLocation);
 			}
 		}
 	}

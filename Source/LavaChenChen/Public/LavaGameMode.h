@@ -53,6 +53,9 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Rules | Debug")
     void DebugNextLevel();
 
+    UFUNCTION(BlueprintCallable, Category = "Rules | Debug")
+    void TeleportToHatch();
+
 protected:
     virtual void BeginPlay() override;
     virtual void EndPlay(const EEndPlayReason::Type Reason) override;
