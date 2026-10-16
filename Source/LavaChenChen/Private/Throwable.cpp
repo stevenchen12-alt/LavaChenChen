@@ -68,4 +68,10 @@ void AThrowable::SetCarried(bool bCarried)
 	}
 }
 
+void AThrowable::HandleHit(UPrimitiveComponent* HitComp, AActor* OtherActor,
+						   UPrimitiveComponent* OtherComp, FVector NormalImpulse,
+						   const FHitResult& Hit)
+{
+
+}
 

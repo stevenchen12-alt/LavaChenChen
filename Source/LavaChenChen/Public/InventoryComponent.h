@@ -31,7 +31,7 @@ struct FInventorySlot
 };
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class LAVA_API UInventoryComponent : public UActorComponent
+class LAVACHENCHEN_API UInventoryComponent : public UActorComponent
 {
 	GENERATED_BODY()
 

@@ -3,13 +3,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Throwable.generated.h"
+#include "Throwable.generated.h" 
 
 class UStaticMeshComponent;
 class UProjectileMovementComponent;
 
 UCLASS(Abstract)
-class LAVA_API AThrowable : public AActor
+class LAVACHENCHEN_API AThrowable : public AActor
 {
     GENERATED_BODY()
 
