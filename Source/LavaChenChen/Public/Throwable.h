@@ -21,12 +21,14 @@ public:
 
     /** While carried it must not fly, collide, or fall. */
     virtual void SetCarried(bool bCarried);
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Throwable")
+    FVector ThrownScale = FVector(1.0f, 1.0f, 1.0f);
 
 protected:
     virtual void BeginPlay() override;
-
+    
     // The signature must match FComponentHitSignature exactly, and it must be a UFUNCTION.
-    UFUNCTION()
     virtual void HandleHit(UPrimitiveComponent* HitComp, AActor* OtherActor,
                            UPrimitiveComponent* OtherComp, FVector NormalImpulse,
                            const FHitResult& Hit);

@@ -37,6 +37,9 @@ ALavaCharacter::ALavaCharacter()
 	
 	// Setups the movement tuning
 	SetupMovementTuning();
+	
+	// Sets up the InventoryComponent
+	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
 }
 
 // Called when the game starts or when spawned
@@ -56,6 +59,13 @@ void ALavaCharacter::BeginPlay()
 	LastSafeRotation = GetActorRotation();
 	
 	GetWorldTimerManager().SetTimer(LastSafePosTimerHandle, this, &ALavaCharacter::UpdateLastSafeLocation, SafeCheckInterval, true);
+	
+	if (InventoryComponent)
+	{
+		InventoryComponent->AddItem(EItemSlot::Cushion);
+		InventoryComponent->AddItem(EItemSlot::Cushion);
+		InventoryComponent->AddItem(EItemSlot::Cushion);
+	}
 }
 
 // Called every frame
@@ -81,6 +91,15 @@ void ALavaCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		
 		// Debug Key for 'l' to speed up lava
 		PlayerInputComponent->BindKey(EKeys::L, IE_Pressed, this, &ALavaCharacter::DebugModifyLavaSpeed);
+		
+		if (ThrowAction)
+		{
+			EnhancedInputComponent->BindAction(ThrowAction, ETriggerEvent::Started, this, &ALavaCharacter::HandleThrow);
+		}
+		if (SwitchToCushionAction)
+		{
+			EnhancedInputComponent->BindAction(SwitchToCushionAction, ETriggerEvent::Started, this, &ALavaCharacter::HandleSwitchToCushion);
+		}
 	}
 }
 
@@ -174,3 +193,26 @@ void ALavaCharacter::UnfreezeInputs()
 	}
 }
 
+void ALavaCharacter::HandleThrow(const FInputActionValue& Value)
+{
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Yellow, TEXT("Input: Throw Pressed!"));
+	}
+	if (InventoryComponent)
+	{
+		InventoryComponent->ThrowEquipped();
+	}
+}
+
+void ALavaCharacter::HandleSwitchToCushion(const FInputActionValue& Value)
+{
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Cyan, TEXT("Input: Switch To Cushion Pressed!"));
+	}
+	if (InventoryComponent)
+	{
+		InventoryComponent->EquipSlot(EItemSlot::Cushion);
+	}
+}

@@ -108,7 +108,8 @@ void UInventoryComponent::RefreshHeldActor()
 		{
 			HeldActor->AttachToComponent(
 				MeshComp,
-				FAttachmentTransformRules::SnapToTargetIncludingScale, HandSocketName
+				FAttachmentTransformRules::SnapToTargetNotIncludingScale, 
+				HandSocketName
 			);
 		}
 	}

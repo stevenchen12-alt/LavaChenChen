@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/Character.h"
+#include "InventoryComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
@@ -52,6 +53,15 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	TObjectPtr<UInputAction> LookAction;
 	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory")
+	TObjectPtr<UInventoryComponent> InventoryComponent;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	TObjectPtr<UInputAction> ThrowAction;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	TObjectPtr<UInputAction> SwitchToCushionAction;
+	
 	UPROPERTY(EditAnywhere, Category="Tuning")
 	float JumpZVelocityTuning = 700.f;
 	UPROPERTY(EditAnywhere, Category="Tuning")
@@ -94,6 +104,13 @@ public:
 	
 	UFUNCTION()
 	void DebugModifyLavaSpeed();
+	
+	UFUNCTION()
+	void HandleThrow(const FInputActionValue& Value);
+	
+	UFUNCTION()
+	void HandleSwitchToCushion(const FInputActionValue& Value);
+	
 	// Third Person camera
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	TObjectPtr<UCameraComponent> ThirdPersonCameraComponent;

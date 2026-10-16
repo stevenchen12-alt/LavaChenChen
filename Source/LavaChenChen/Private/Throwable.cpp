@@ -37,11 +37,14 @@ void AThrowable::BeginPlay()
 void AThrowable::Throw(const FVector& Direction)
 {
 	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+	Mesh->SetWorldScale3D(ThrownScale);
 	SetCarried(false);
 	if (Movement)
 	{
 		Movement->SetActive(true);
-		Movement->Velocity = Direction.GetSafeNormal() * ThrowSpeed;
+		FVector ThrowVelocity = Direction.GetSafeNormal() * ThrowSpeed;
+		Movement->Velocity = ThrowVelocity;
+		Movement->UpdateComponentVelocity();
 	}
 }
 
@@ -63,7 +66,16 @@ void AThrowable::SetCarried(bool bCarried)
 	{
 		if (Mesh)
 		{
+			Mesh->SetSimulatePhysics(false);
 			Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+			if (AActor* MyOwner = GetOwner())
+			{
+				Mesh->IgnoreActorWhenMoving(MyOwner, true);
+			}
+		}
+		if (Movement)
+		{
+			Movement->SetActive(true);
 		}
 	}
 }

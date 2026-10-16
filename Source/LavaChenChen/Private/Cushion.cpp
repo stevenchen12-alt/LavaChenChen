@@ -18,6 +18,9 @@ void ACushion::HandleHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrim
 			Movement->StopMovementImmediately();
 			Movement->Deactivate();
 		}
+		
+		AttachToActor(OtherActor, FAttachmentTransformRules::KeepWorldTransform);
+		
 		GetWorld()->GetTimerManager().SetTimer(BurnTimerHandle, this, &ACushion::DestroyCushion,BurnTime, false);
 	}
 }

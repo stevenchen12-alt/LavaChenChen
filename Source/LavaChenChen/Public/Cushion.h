@@ -4,13 +4,14 @@
 #include "Throwable.h"
 #include "Cushion.generated.h"
 
-UCLASS()
+UCLASS(Blueprintable, BlueprintType)
 class LAVACHENCHEN_API ACushion : public AThrowable
 {
 	GENERATED_BODY()
 
 	
 public:
+	UFUNCTION()
 	// Destroy cushion after 5 seconds
 	void DestroyCushion();
 
@@ -22,7 +23,7 @@ public:
 	float BurnTime = 5.0f;
 
 protected:
-	// Override HandleHit to listen for impacts with lava
+	UFUNCTION()
 	virtual void HandleHit(UPrimitiveComponent* HitComp, AActor* OtherActor,
 						   UPrimitiveComponent* OtherComp, FVector NormalImpulse,
 						   const FHitResult& Hit) override;
