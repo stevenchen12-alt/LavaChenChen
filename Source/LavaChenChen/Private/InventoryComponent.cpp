@@ -38,7 +38,7 @@ bool UInventoryComponent::AddItem(EItemSlot Slot)
 
 void UInventoryComponent::EquipSlot(EItemSlot Slot)
 {
-	if (EquippedSlot != Slot && !HeldActor)
+	if (EquippedSlot != Slot)
 	{
 		EquippedSlot = Slot;
 		RefreshHeldActor();

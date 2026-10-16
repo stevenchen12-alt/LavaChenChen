@@ -62,6 +62,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	TObjectPtr<UInputAction> SwitchToCushionAction;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	TObjectPtr<UInputAction> SwitchToExtinguisherAction;
+	
 	UPROPERTY(EditAnywhere, Category="Tuning")
 	float JumpZVelocityTuning = 700.f;
 	UPROPERTY(EditAnywhere, Category="Tuning")
@@ -110,6 +113,9 @@ public:
 	
 	UFUNCTION()
 	void HandleSwitchToCushion(const FInputActionValue& Value);
+	
+	UFUNCTION()
+	void HandleSwitchToExtinguisher(const FInputActionValue& Value);
 	
 	// Third Person camera
 	UPROPERTY(VisibleAnywhere, Category = Camera)

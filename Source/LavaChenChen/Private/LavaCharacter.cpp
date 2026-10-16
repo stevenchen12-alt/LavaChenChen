@@ -65,6 +65,8 @@ void ALavaCharacter::BeginPlay()
 		InventoryComponent->AddItem(EItemSlot::Cushion);
 		InventoryComponent->AddItem(EItemSlot::Cushion);
 		InventoryComponent->AddItem(EItemSlot::Cushion);
+		InventoryComponent->AddItem(EItemSlot::Extinguisher);
+		InventoryComponent->AddItem(EItemSlot::Extinguisher);
 	}
 }
 
@@ -99,6 +101,10 @@ void ALavaCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		if (SwitchToCushionAction)
 		{
 			EnhancedInputComponent->BindAction(SwitchToCushionAction, ETriggerEvent::Started, this, &ALavaCharacter::HandleSwitchToCushion);
+		}
+		if (SwitchToExtinguisherAction)
+		{
+			EnhancedInputComponent->BindAction(SwitchToExtinguisherAction, ETriggerEvent::Started, this, &ALavaCharacter::HandleSwitchToExtinguisher);
 		}
 	}
 }
@@ -214,5 +220,17 @@ void ALavaCharacter::HandleSwitchToCushion(const FInputActionValue& Value)
 	if (InventoryComponent)
 	{
 		InventoryComponent->EquipSlot(EItemSlot::Cushion);
+	}
+}
+
+void ALavaCharacter::HandleSwitchToExtinguisher(const FInputActionValue& Value)
+{
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Cyan, TEXT("Input: Switch To Extinguisher Pressed!"));
+	}
+	if (InventoryComponent)
+	{
+		InventoryComponent->EquipSlot(EItemSlot::Extinguisher);
 	}
 }
