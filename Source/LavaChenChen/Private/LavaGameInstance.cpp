@@ -15,3 +15,11 @@ void ULavaGameInstance::NextLevel() {
 		ResetRun();
 	}
 }
+
+void ULavaGameInstance::SetBuildingIndex(int32 newIndex) {
+	if (newIndex >= TotalBuildings || newIndex < 0) {
+		return;
+	}
+
+	BuildingIndex = newIndex;
+}

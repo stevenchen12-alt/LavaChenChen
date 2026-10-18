@@ -33,4 +33,7 @@ public:
 
     UFUNCTION(BlueprintCallable, Category = "Run")
     void NextLevel();
+
+    UFUNCTION(BlueprintCallable, Category = "Run")
+    void SetBuildingIndex(int32 newIndex);
 };
