@@ -1,27 +1,79 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "PickupStation.h"
+#include "Components/StaticMeshComponent.h"
+#include "Components/BoxComponent.h"
+#include "LavaCharacter.h"
+#include "InventoryComponent.h"
+#include "TimerManager.h"
 
-// Sets default values
 APickupStation::APickupStation()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+    PrimaryActorTick.bCanEverTick = false;
 
+    // Create and set the static mesh as the root component
+    MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
+    RootComponent = MeshComp;
+
+    // Create and attach the trigger box to the mesh
+    Trigger = CreateDefaultSubobject<UBoxComponent>(TEXT("TriggerBox"));
+    Trigger->SetupAttachment(RootComponent);
+
+    // Configure collision for player overlap
+    Trigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+    Trigger->SetCollisionResponseToAllChannels(ECR_Ignore);
+    Trigger->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+    
+    // Set default box bounds
+    Trigger->SetBoxExtent(FVector(50.0f, 50.0f, 50.0f));
 }
 
-// Called when the game starts or when spawned
 void APickupStation::BeginPlay()
 {
-	Super::BeginPlay();
-	
+    Super::BeginPlay();
+
+    if (Trigger)
+    {
+        Trigger->OnComponentBeginOverlap.AddDynamic(this, &APickupStation::HandleOverlap);
+    }
 }
 
-// Called every frame
-void APickupStation::Tick(float DeltaTime)
+void APickupStation::EndPlay(const EEndPlayReason::Type Reason)
 {
-	Super::Tick(DeltaTime);
+    if (GetWorld() && GetWorld()->GetTimerManager().IsTimerActive(RestockTimer))
+    {
+        GetWorld()->GetTimerManager().ClearTimer(RestockTimer);
+    }
 
+    Super::EndPlay(Reason);
 }
 
+void APickupStation::HandleOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+                                   UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
+                                   bool bFromSweep, const FHitResult& Sweep)
+{
+    if (!bAvailable) return;
+
+    ALavaCharacter* PlayerCharacter = Cast<ALavaCharacter>(OtherActor);
+    if (!PlayerCharacter) return;
+
+    UInventoryComponent* InventoryComp = PlayerCharacter->FindComponentByClass<UInventoryComponent>();
+    if (!InventoryComp) return;
+
+    if (InventoryComp->AddItem(ItemType))
+    {
+        bAvailable = false;
+
+        if (RestockSeconds > 0.0f)
+        {
+            GetWorld()->GetTimerManager().SetTimer(RestockTimer, this, &APickupStation::Restock, RestockSeconds, false);
+        }
+        else
+        {
+            Restock();
+        }
+    }
+}
+
+void APickupStation::Restock()
+{
+    bAvailable = true;
+}
