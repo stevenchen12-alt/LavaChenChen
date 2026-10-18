@@ -24,18 +24,41 @@ void ALavaGameMode::BeginPlay() {
 	RoofHatchActor = UGameplayStatics::GetActorOfClass(GetWorld(), ARoofHatch::StaticClass());
 	LavaActor = UGameplayStatics::GetActorOfClass(GetWorld(), ALava::StaticClass());
 	
-
 	KeysCollected = 0;
 	LivesLeft = StartingLives;
 	bGameOver = false;
 	Message = TEXT("");
 	Score = 0;
+
+	if (RoofHatchActor && LavaActor) {
+		ALava* CurrentLavaActor = Cast<ALava>(LavaActor);
+
+		float RoofHatchZ = RoofHatchActor->GetActorLocation().Z;
+		float LavaZ = LavaActor->GetActorLocation().Z;
+		float LavaRiseRate = CurrentLavaActor->RiseRate;
+
+		// If lava is below roof hatch
+		if (LavaZ < RoofHatchZ) {
+			LevelSeconds = (RoofHatchZ - LavaZ) / LavaRiseRate;
+		}
+	}
 	
 	// Get the score of the previous level (or 0, if it's the first level)
 	ULavaGameInstance* LavaGameInstance = Cast<ULavaGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 
 	if (LavaGameInstance) {
 		Score = LavaGameInstance->Score;
+
+		// If the map is arches
+		FString CurrentMapName = FPaths::GetBaseFilename(GetWorld()->GetMapName());
+
+		if (CurrentMapName.Contains(TEXT("ArchesNationalParkMap"))) {
+			LavaGameInstance->SetBuildingIndex(1);
+
+
+
+
+		}
 	}
 
 	// Set timer for LevelSeconds. Calls HandleTimeExpired when time runs out
@@ -51,7 +74,7 @@ void ALavaGameMode::EndPlay(const EEndPlayReason::Type Reason) {
 void ALavaGameMode::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 	
-	if (RoofHatchActor) {
+	if (RoofHatchActor && LavaActor) {
 		float RoofHatchZ = RoofHatchActor->GetActorLocation().Z;
 		float LavaZ = LavaActor->GetActorLocation().Z;
 
@@ -130,16 +153,16 @@ void ALavaGameMode::EndGame(bool bWon) {
 	if (bWon) {
 		Score += FMath::CeilToInt(GetTimeRemaining());
 		Message = TEXT("You escaped the lava!");
-	}
 
-	// Add the score to the game instance
-	ULavaGameInstance* LavaGameInstance = Cast<ULavaGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+		// Add the score to the game instance
+		ULavaGameInstance* LavaGameInstance = Cast<ULavaGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 
-	if (LavaGameInstance) {
-		LavaGameInstance->AddScore(Score);
+		if (LavaGameInstance) {
+			LavaGameInstance->AddScore(Score);
 
-		// Increment to the next level (if the level is the last level, it will make the level index 0)
-		LavaGameInstance->NextLevel();
+			// Increment to the next level (if the level is the last level, it will make the level index 0)
+			LavaGameInstance->NextLevel();
+		}
 	}
 
 	if (ResultWidgetClass) {
@@ -266,19 +289,11 @@ void ALavaGameMode::TeleportToHatch() {
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, CurrentMapName);
 
 	if (CurrentMapName.Contains(TEXT("ArchesNationalParkMap"))) {
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, TEXT("This is the arches map"));
-
-		AActor* RoofHatch = UGameplayStatics::GetActorOfClass(GetWorld(), ARoofHatch::StaticClass());
-
-		if (RoofHatch) {
-			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, TEXT("Roof Hatch exists!"));
-
+		if (RoofHatchActor) {
 			ALavaCharacter* PlayerCharacter = Cast<ALavaCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 
 			if (PlayerCharacter) {
-				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, TEXT("Player exists"));
-
-				FVector TargetLocation = RoofHatch->GetActorLocation() + FVector(100.0f, 0.0f, 0.0f);
+				FVector TargetLocation = RoofHatchActor->GetActorLocation() + FVector(100.0f, 0.0f, 0.0f);
 
 				PlayerCharacter->SetActorLocation(TargetLocation);
 			}
