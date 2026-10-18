@@ -30,6 +30,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Tuning", meta = (ClampMin = "0.0", Units = "cm/s"))
 	float RiseRate = 40.f;
 
+
 protected:
 	virtual void BeginPlay() override;
 

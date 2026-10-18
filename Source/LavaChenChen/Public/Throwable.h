@@ -25,6 +25,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Throwable")
     FVector ThrownScale = FVector(1.0f, 1.0f, 1.0f);
 
+    UPROPERTY(EditAnywhere, Category = "Tuning", meta = (ClampMin = "0.0"))
+    float ThrowSpeed = 1600.f;
+    
 protected:
     virtual void BeginPlay() override;
     
@@ -38,9 +41,6 @@ protected:
 
     UPROPERTY(VisibleAnywhere, Category = "Components")
     TObjectPtr<UProjectileMovementComponent> Movement;
-
-    UPROPERTY(EditAnywhere, Category = "Tuning", meta = (ClampMin = "0.0"))
-    float ThrowSpeed = 1600.f;
     
     UPROPERTY(EditAnywhere, Category = "Tuning", meta = (ClampMin = "0.0"))
     float ProjectileGravity = 1.0f;

@@ -23,12 +23,12 @@ void ALavaGameMode::BeginPlay() {
 
 	RoofHatchActor = UGameplayStatics::GetActorOfClass(GetWorld(), ARoofHatch::StaticClass());
 	LavaActor = UGameplayStatics::GetActorOfClass(GetWorld(), ALava::StaticClass());
+	
 
 	KeysCollected = 0;
 	LivesLeft = StartingLives;
 	bGameOver = false;
 	Message = TEXT("");
-
 	Score = 0;
 	
 	// Get the score of the previous level (or 0, if it's the first level)

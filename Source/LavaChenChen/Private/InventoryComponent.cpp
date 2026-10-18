@@ -55,16 +55,26 @@ void UInventoryComponent::ThrowEquipped()
 	SlotData->Count--;
 	
 	ALavaCharacter* LavaCharacter = Cast<ALavaCharacter>(GetOwner());
-	FVector ThrowDirection;
 	if (LavaCharacter)
 	{
-		ThrowDirection = LavaCharacter->GetActorForwardVector();
+		FRotator ControlRot = LavaCharacter->GetControlRotation();
+		FVector ThrowDir = ControlRot.Vector();
+		
+		ThrowDir.Z += 0.35f; 
+		ThrowDir.Normalize();
+		
+		FVector FinalThrowVelocity = ThrowDir * HeldActor->ThrowSpeed;
+		
+		FVector PlayerVelocity = LavaCharacter->GetVelocity();
+		
+		FinalThrowVelocity += (PlayerVelocity * 0.5f);
+		
+		HeldActor->Throw(FinalThrowVelocity);
 	} else
 	{
-		ThrowDirection = FVector::ForwardVector;
+		HeldActor->Throw(FVector::ForwardVector * HeldActor->ThrowSpeed);
 	}
 	
-	HeldActor->Throw(ThrowDirection);
 	HeldActor = nullptr;
 	if (SlotData->Count > 0)
 	{
