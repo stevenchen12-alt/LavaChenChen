@@ -43,4 +43,13 @@ public:
 	
 	UFUNCTION(BlueprintPure, Category = "HUD Data")
 	int32 GetKeysCollected();
+	
+	UFUNCTION(BlueprintPure, Category = "HUD Data")
+	int32 GetCushionCount() const;
+
+	UFUNCTION(BlueprintPure, Category = "HUD Data")
+	int32 GetExtinguisherCount() const;
+
+	UFUNCTION(BlueprintPure, Category = "HUD Data")
+	bool IsSlotEquipped(EItemSlot Slot) const;
 };

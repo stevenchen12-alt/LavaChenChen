@@ -51,6 +51,9 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Inventory")
 	int32 GetCount(EItemSlot Slot) const;
+	
+	UFUNCTION(BlueprintPure, Category = "Inventory")
+	EItemSlot GetEquippedSlot() const;
 
 protected:
 	/** Destroy whatever is in the hand and attach one of the newly equipped item. */

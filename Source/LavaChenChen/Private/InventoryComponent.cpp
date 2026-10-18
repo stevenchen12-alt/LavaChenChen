@@ -92,6 +92,11 @@ int32 UInventoryComponent::GetCount(EItemSlot Slot) const
 	return SlotData->Count;
 }
 
+EItemSlot UInventoryComponent::GetEquippedSlot() const
+{
+	return EquippedSlot;
+}
+
 void UInventoryComponent::RefreshHeldActor()
 {
 	if (HeldActor)

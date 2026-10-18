@@ -3,6 +3,7 @@
 
 #include "LavaHUD.h"
 #include "Lava.h"
+#include "LavaCharacter.h"
 #include "LavaGameMode.h"
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/UserWidget.h"
@@ -61,5 +62,41 @@ int32 ALavaHUD::GetKeysCollected()
 		return GameMode->GetKeysCollected();
 	}
 	return 0;
+}
+
+int32 ALavaHUD::GetCushionCount() const
+{
+	if (ALavaCharacter* LavaCharacter = Cast<ALavaCharacter>(GetOwningPawn()))
+	{
+		if (UInventoryComponent* Inventory = LavaCharacter->FindComponentByClass<UInventoryComponent>())
+		{
+			return Inventory->GetCount(EItemSlot::Cushion);
+		}
+	}
+	return 0;
+}
+
+int32 ALavaHUD::GetExtinguisherCount() const
+{
+	if (ALavaCharacter* LavaCharacter = Cast<ALavaCharacter>(GetOwningPawn()))
+	{
+		if (UInventoryComponent* Inventory = LavaCharacter->FindComponentByClass<UInventoryComponent>())
+		{
+			return Inventory->GetCount(EItemSlot::Extinguisher);
+		}
+	}
+	return 0;
+}
+
+bool ALavaHUD::IsSlotEquipped(EItemSlot Slot) const
+{
+	if (ALavaCharacter* LavaCharacter = Cast<ALavaCharacter>(GetOwningPawn()))
+	{
+		if (UInventoryComponent* Inventory = LavaCharacter->FindComponentByClass<UInventoryComponent>())
+		{
+			return Inventory->GetEquippedSlot() == Slot;
+		}
+	}
+	return false;
 }
 
