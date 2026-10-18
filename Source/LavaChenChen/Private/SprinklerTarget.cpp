@@ -3,6 +3,7 @@
 
 #include "SprinklerTarget.h"
 #include "LavaKey.h"
+#include "Extinguisher.h"
 
 // Sets default values
 ASprinklerTarget::ASprinklerTarget()
@@ -45,8 +46,7 @@ void ASprinklerTarget::HandleHit(UPrimitiveComponent* HitComp, AActor* OtherActo
 		return;
 	}
 
-	//if (OtherActor && OtherActor->IsA(AExtinguisher::StaticClass())) {
-	if (OtherActor) { // Remove this line and uncomment the one above when AExtinguisher is created
+	if (OtherActor && OtherActor->IsA(AExtinguisher::StaticClass())) {
 		bHasBeenHit = true;
 
 		// Change the mesh or the material to look like it was hit
