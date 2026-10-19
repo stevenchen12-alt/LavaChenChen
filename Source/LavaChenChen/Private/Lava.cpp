@@ -5,6 +5,8 @@
 
 #include "LavaCharacter.h"
 #include "LavaGameMode.h"
+#include "Throwable.h"
+#include "Extinguisher.h"
 #include "RoofHatch.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -86,7 +88,10 @@ void ALava::HandleOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActo
 				GetWorldTimerManager().SetTimer(ProtectedTimerHandle, this, &ALava::RemoveProtected, ProtectedTime, false);
 				LavaCharacter->RespawnAtSafeLocation();
 			}
-		} 
+		} else if (AExtinguisher* Extinguisher = Cast<AExtinguisher>(OtherActor))
+		{
+			Extinguisher->Destroy();
+		}
 	}
 }
 

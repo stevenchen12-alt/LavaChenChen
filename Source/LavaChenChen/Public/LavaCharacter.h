@@ -109,6 +109,9 @@ public:
 	void DebugModifyLavaSpeed();
 	
 	UFUNCTION()
+	void DebugFillInventory();
+	
+	UFUNCTION()
 	void HandleThrow(const FInputActionValue& Value);
 	
 	UFUNCTION()

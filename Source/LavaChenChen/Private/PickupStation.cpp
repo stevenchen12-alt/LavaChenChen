@@ -9,20 +9,16 @@ APickupStation::APickupStation()
 {
     PrimaryActorTick.bCanEverTick = false;
 
-    // Create and set the static mesh as the root component
     MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
     RootComponent = MeshComp;
 
-    // Create and attach the trigger box to the mesh
     Trigger = CreateDefaultSubobject<UBoxComponent>(TEXT("TriggerBox"));
     Trigger->SetupAttachment(RootComponent);
 
-    // Configure collision for player overlap
     Trigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
     Trigger->SetCollisionResponseToAllChannels(ECR_Ignore);
     Trigger->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
     
-    // Set default box bounds
     Trigger->SetBoxExtent(FVector(50.0f, 50.0f, 50.0f));
 }
 

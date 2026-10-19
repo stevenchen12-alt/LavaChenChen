@@ -59,15 +59,6 @@ void ALavaCharacter::BeginPlay()
 	LastSafeRotation = GetActorRotation();
 	
 	GetWorldTimerManager().SetTimer(LastSafePosTimerHandle, this, &ALavaCharacter::UpdateLastSafeLocation, SafeCheckInterval, true);
-	
-	if (InventoryComponent)
-	{
-		InventoryComponent->AddItem(EItemSlot::Cushion);
-		InventoryComponent->AddItem(EItemSlot::Cushion);
-		InventoryComponent->AddItem(EItemSlot::Cushion);
-		InventoryComponent->AddItem(EItemSlot::Extinguisher);
-		InventoryComponent->AddItem(EItemSlot::Extinguisher);
-	}
 }
 
 // Called every frame
@@ -94,18 +85,12 @@ void ALavaCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		// Debug Key for 'l' to speed up lava
 		PlayerInputComponent->BindKey(EKeys::L, IE_Pressed, this, &ALavaCharacter::DebugModifyLavaSpeed);
 		
-		if (ThrowAction)
-		{
-			EnhancedInputComponent->BindAction(ThrowAction, ETriggerEvent::Started, this, &ALavaCharacter::HandleThrow);
-		}
-		if (SwitchToCushionAction)
-		{
-			EnhancedInputComponent->BindAction(SwitchToCushionAction, ETriggerEvent::Started, this, &ALavaCharacter::HandleSwitchToCushion);
-		}
-		if (SwitchToExtinguisherAction)
-		{
-			EnhancedInputComponent->BindAction(SwitchToExtinguisherAction, ETriggerEvent::Started, this, &ALavaCharacter::HandleSwitchToExtinguisher);
-		}
+		EnhancedInputComponent->BindAction(ThrowAction, ETriggerEvent::Started, this, &ALavaCharacter::HandleThrow);
+		EnhancedInputComponent->BindAction(SwitchToCushionAction, ETriggerEvent::Started, this, &ALavaCharacter::HandleSwitchToCushion);
+		EnhancedInputComponent->BindAction(SwitchToExtinguisherAction, ETriggerEvent::Started, this, &ALavaCharacter::HandleSwitchToExtinguisher);
+		
+		PlayerInputComponent->BindKey(EKeys::I, IE_Pressed, this, &ALavaCharacter::DebugFillInventory);
+		
 	}
 }
 
@@ -157,6 +142,18 @@ void ALavaCharacter::DebugModifyLavaSpeed()
 	if (ALava* Lava = Cast<ALava>(UGameplayStatics::GetActorOfClass(GetWorld(), ALava::StaticClass())))
 	{
 		Lava->RiseRate *= 4.f; // Speed up by four times
+	}
+}
+
+void ALavaCharacter::DebugFillInventory()
+{
+	if (InventoryComponent)
+	{
+		InventoryComponent->AddItem(EItemSlot::Cushion);
+		InventoryComponent->AddItem(EItemSlot::Cushion);
+		InventoryComponent->AddItem(EItemSlot::Cushion);
+		InventoryComponent->AddItem(EItemSlot::Extinguisher);
+		InventoryComponent->AddItem(EItemSlot::Extinguisher);
 	}
 }
 
