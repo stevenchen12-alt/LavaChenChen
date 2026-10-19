@@ -54,10 +54,6 @@ void ALavaGameMode::BeginPlay() {
 
 		if (CurrentMapName.Contains(TEXT("ArchesNationalParkMap"))) {
 			LavaGameInstance->SetBuildingIndex(1);
-
-
-
-
 		}
 	}
 
@@ -281,18 +277,16 @@ void ALavaGameMode::DebugNextLevel() {
 }
 
 void ALavaGameMode::TeleportToHatch() {
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, TEXT("Pressed 'T'!"));
-
 	// If the map is arches
 	FString CurrentMapName = FPaths::GetBaseFilename(GetWorld()->GetMapName());
-
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, CurrentMapName);
 
 	if (CurrentMapName.Contains(TEXT("ArchesNationalParkMap"))) {
 		if (RoofHatchActor) {
 			ALavaCharacter* PlayerCharacter = Cast<ALavaCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 
 			if (PlayerCharacter) {
+				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, TEXT("Teleporting to hatch!"));
+
 				FVector TargetLocation = RoofHatchActor->GetActorLocation() + FVector(100.0f, 0.0f, 0.0f);
 
 				PlayerCharacter->SetActorLocation(TargetLocation);
