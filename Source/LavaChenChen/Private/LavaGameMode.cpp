@@ -70,14 +70,7 @@ void ALavaGameMode::EndPlay(const EEndPlayReason::Type Reason) {
 void ALavaGameMode::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 	
-	if (RoofHatchActor && LavaActor) {
-		float RoofHatchZ = RoofHatchActor->GetActorLocation().Z;
-		float LavaZ = LavaActor->GetActorLocation().Z;
-
-		if (LavaZ >= RoofHatchZ && !bGameOver) {
-			LavaAboveHatch();
-		}
-	}
+	
 }
 
 void ALavaGameMode::ReportKeyCollected() {
@@ -234,6 +227,10 @@ void ALavaGameMode::DebugGiveAllKeys() {
 }
 
 void ALavaGameMode::LavaAboveHatch() {
+	if (bGameOver) {
+		return;
+	}
+
 	Message = "Lava rose above the hatch!";
 
 	EndGame(false);

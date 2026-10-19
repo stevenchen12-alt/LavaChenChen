@@ -5,6 +5,7 @@
 
 #include "LavaCharacter.h"
 #include "LavaGameMode.h"
+#include "RoofHatch.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -45,15 +46,24 @@ void ALava::Tick(float DeltaTime)
 	
 	FVector CurrentLocation = GetActorLocation();
 	CurrentLocation.Z += RiseRate * DeltaTime;
-	float MaxBuildingHeight = 3178.f;
-	if (CurrentLocation.Z >= MaxBuildingHeight)
-	{
-		if (ALavaGameMode* GameMode = Cast<ALavaGameMode>(UGameplayStatics::GetGameMode(this)))
+
+	AActor* RoofHatchActor = UGameplayStatics::GetActorOfClass(GetWorld(), ARoofHatch::StaticClass());
+
+	if (RoofHatchActor) {
+		float RoofHatchZ = RoofHatchActor->GetActorLocation().Z;
+
+		if (CurrentLocation.Z >= RoofHatchZ)
 		{
-			GameMode->LavaAboveHatch();
+			if (ALavaGameMode* GameMode = Cast<ALavaGameMode>(UGameplayStatics::GetGameMode(this)))
+			{
+				GameMode->LavaAboveHatch();
+			}
+		}
+
+		else {
+			SetActorLocation(CurrentLocation);
 		}
 	}
-	SetActorLocation(CurrentLocation);
 }
 
 float ALava::GetRiseHeight() const
